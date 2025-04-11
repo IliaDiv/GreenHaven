@@ -821,7 +821,7 @@ footer {
 
   video {
     position: absolute;
-    width: 768px;
+    width: auto;
     margin-top: 0px;
     height: auto;
   }
@@ -874,5 +874,17 @@ footer {
   
   .cta-buttons {
     flex-direction: column;
+  }
+  p1 {
+    font-size: 20px;
+  }
+  label {
+    font-size: 20px;
+  }
+  .checkmark {
+    font-size: 20px;
+  }
+  li {
+    font-size: 20px;
   }
 }
