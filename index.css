@@ -170,7 +170,7 @@ nav a:hover {
 
 video {
   height: 950px;
-  width: 1685px;
+  width: auto;
 }
 
 .hero-content {
@@ -820,10 +820,11 @@ footer {
   }
 
   video {
-    position: absolute;
-    width: auto;
-    margin-top: 0px;
+    width: 100%;
+    max-width: 100%;
     height: auto;
+    display: block;
+    margin-top: 0px;
   }
   
   nav.active {
