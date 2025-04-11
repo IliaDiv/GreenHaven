@@ -168,10 +168,9 @@ nav a:hover {
   background-position: center;
 }
 
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.2);
+video {
+  height: 950px;
+  width: 1685px;
 }
 
 .hero-content {
@@ -224,6 +223,7 @@ nav a:hover {
 .section-header {
   text-align: center;
   margin-bottom: 3rem;
+  z-index: 10;
 }
 
 .section-header h2 {
@@ -818,6 +818,13 @@ footer {
   nav {
     display: none;
   }
+
+  video {
+    position: absolute;
+    width: 768px;
+    margin-top: 0px;
+    height: auto;
+  }
   
   nav.active {
     display: block;
@@ -843,7 +850,12 @@ footer {
     display: none;
   }
   
+  .hide {
+    display: none;
+  }
+
   .hero-text {
+    margin-top: 30px;
     padding: 1.5rem;
     width: 90%;
   }
@@ -862,81 +874,5 @@ footer {
   
   .cta-buttons {
     flex-direction: column;
-  }
-}
-
-@media (max-width: 640px) {
-  .hero-text h1 {
-    font-size: 2rem;
-  }
-  
-  .hero-text p {
-    font-size: 1rem;
-  }
-  
-  .section-header h2 {
-    font-size: 1.75rem;
-  }
-  
-  .features-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-  
-  .footer-grid {
-    grid-template-columns: 1fr;
-  }
-  .carousel-btn {
-    width: 2.5rem;
-    height: 2.5rem;
-  }
-  .contact-container {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .hero-text h1 {
-    font-size: 2rem;
-  }
-  
-  .hero-text p {
-    font-size: 1rem;
-  }
-  
-  .section-header h2 {
-    font-size: 1.75rem;
-  }
-  
-  .features-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-  
-  .footer-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .features-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-  
-  .footer-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .carousel-btn {
-    width: 2rem;
-    height: 2rem;
   }
 }
