@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenHaven - Indoor Plant Boutique</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="script.js"></script>
+</head>
+
+
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">
+        <i class="fas fa-leaf"></i>
+        <span>GreenHaven</span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#Home">Home</a></li>
+          <li><a href="#ShopPlants">Shop Plants</a></li>
+          <li><a href="#Accessories">Pots & Accessories</a></li>
+          <li><a href="#Workshop">Workshops</a></li>
+          <li><a href="#Closing">About Us</a></li>
+        </ul>
+      </nav>
+      <div class="header-buttons">
+        <button class="btn-outline">Sign In</button>
+        <button class="btn-primary">Shop Now</button>
+      </div>
+      <div class="mobile-menu-btn">
+        <i class="fas fa-bars"></i>
+      </div>
+    </div>
+  </header>
+
+
+
+
+  
+  <main>
+    <section id="Home" class="hero">
+      <div class="hero-overlay">
+        <video src="videos/bg-video.mp4" autoplay muted loop height="950px"></video>
+      </div>
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1>Bring Nature Indoors</h1>
+          <p>We help bring nature into homes and workspaces with easy-care plants, stylish pots, and educational workshops.</p>
+          <div class="hero-buttons">
+            <button class="btn-primary">Shop Plants</button>
+            <button class="btn-outline">Explore Workshops</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+
+
+
+    <section class="features">
+      <div class="container">
+        <div class="section-header">
+          <h2>Why Choose GreenHaven?</h2>
+          <p>We're passionate about plants and helping you create your own green sanctuary.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card" data-aos="zoom-in-right">
+            <div class="feature-icon">
+              <i class="fas fa-leaf"></i>
+            </div>
+            <h3>Easy-Care Plants</h3>
+            <p>Curated selection of low-maintenance plants perfect for beginners and busy plant parents.</p>
+          </div>
+          <div class="feature-card" data-aos="zoom-in">
+            <div class="feature-icon">
+              <i class="fas fa-paint-brush"></i>
+            </div>
+            <h3>Stylish Pots</h3>
+            <p>Beautiful, handcrafted pots and planters that complement your home décor.</p>
+          </div>
+          <div class="feature-card" data-aos="zoom-in-left">
+            <div class="feature-icon">
+              <i class="fas fa-home"></i>
+            </div>
+            <h3>Educational Workshops</h3>
+            <p>Learn plant care basics, advanced techniques, and creative ways to display your green friends.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+
+
+
+    <!-- Products Section with Carousel -->
+    <section id="ShopPlants" class="products">
+      <div class="container">
+        <div class="section-header">
+          <h2>Featured Plants</h2>
+          <p>Discover our most popular easy-care plants for your space.</p>
+        </div>
+        
+        <div class="carousel-container">
+          <div class="carousel-wrapper">
+            <div class="carousel-slides">
+              <!-- Slide 1 -->
+              <div class="carousel-slide">
+                <div class="products-grid">
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/snake-plant-basic.jpg" alt="Snake Plant">
+                    </div>
+                    <div class="product-info">
+                      <h3>Snake Plant</h3>
+                      <p>Perfect for beginners and low light conditions.</p>
+                      <div class="product-footer">
+                        <span class="price">$24.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Pothos.jpg" alt="Pothos">
+                    </div>
+                    <div class="product-info">
+                      <h3>Pothos</h3>
+                      <p>Fast-growing vine that thrives in various conditions.</p>
+                      <div class="product-footer">
+                        <span class="price">$19.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/zz_plant.jpg" alt="ZZ Plant">
+                    </div>
+                    <div class="product-info">
+                      <h3>ZZ Plant</h3>
+                      <p>Drought-tolerant and perfect for forgetful waterers.</p>
+                      <div class="product-footer">
+                        <span class="price">$29.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/monastera-basic.jpg" alt="Monstera">
+                    </div>
+                    <div class="product-info">
+                      <h3>Monstera</h3>
+                      <p>Iconic split leaves that add tropical flair.</p>
+                      <div class="product-footer">
+                        <span class="price">$34.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Slide 2 -->
+              <div class="carousel-slide">
+                <div class="products-grid">
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Fiddle-leaf.jpg" alt="Fiddle Leaf Fig">
+                    </div>
+                    <div class="product-info">
+                      <h3>Fiddle Leaf Fig</h3>
+                      <p>Dramatic foliage that makes a statement in any room.</p>
+                      <div class="product-footer">
+                        <span class="price">$49.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Peace-lily.jpg" alt="Peace Lily">
+                    </div>
+                    <div class="product-info">
+                      <h3>Peace Lily</h3>
+                      <p>Elegant white flowers and air-purifying benefits.</p>
+                      <div class="product-footer">
+                        <span class="price">$22.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Spider-plant.jpg" alt="Spider Plant">
+                    </div>
+                    <div class="product-info">
+                      <h3>Spider Plant</h3>
+                      <p>Fast-growing and perfect for hanging baskets.</p>
+                      <div class="product-footer">
+                        <span class="price">$18.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Rubber-plant.jpg" alt="Rubber Plant">
+                    </div>
+                    <div class="product-info">
+                      <h3>Rubber Plant</h3>
+                      <p>Glossy leaves and striking vertical growth.</p>
+                      <div class="product-footer">
+                        <span class="price">$32.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Slide 3 -->
+              <div class="carousel-slide">
+                <div class="products-grid">
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Aloe-vera.jpg" alt="Aloe Vera">
+                    </div>
+                    <div class="product-info">
+                      <h3>Aloe Vera</h3>
+                      <p>Medicinal plant with soothing gel inside its leaves.</p>
+                      <div class="product-footer">
+                        <span class="price">$15.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Boston-fern.jpg" alt="Boston Fern">
+                    </div>
+                    <div class="product-info">
+                      <h3>Boston Fern</h3>
+                      <p>Lush, feathery fronds that add texture to any space.</p>
+                      <div class="product-footer">
+                        <span class="price">$27.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Chinese-monkey.jpg" alt="Chinese Money Plant">
+                    </div>
+                    <div class="product-info">
+                      <h3>Chinese Money Plant</h3>
+                      <p>Quirky round leaves on thin stems.</p>
+                      <div class="product-footer">
+                        <span class="price">$23.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Air-plant.jpg" alt="Air Plant">
+                    </div>
+                    <div class="product-info">
+                      <h3>Air Plant</h3>
+                      <p>No soil needed - perfect for creative displays.</p>
+                      <div class="product-footer">
+                        <span class="price">$12.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Carousel Navigation -->
+            <button class="carousel-btn prev-btn" aria-label="Previous slide">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="carousel-btn next-btn" aria-label="Next slide">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+          
+          <!-- Carousel Indicators -->
+          <div class="carousel-indicators">
+            <button class="indicator active" data-slide="0" aria-label="Go to slide 1"></button>
+            <button class="indicator" data-slide="1" aria-label="Go to slide 2"></button>
+            <button class="indicator" data-slide="2" aria-label="Go to slide 3"></button>
+          </div>
+        </div>
+        
+        <div class="view-all">
+          <button class="btn-outline">
+            View All Plants
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+
+
+
+    <!-- Products Section with Carousel -->
+    <section id="Accessories" class="products">
+      <div class="container">
+        <div class="section-header">
+          <h2>Recommended Additions</h2>
+          <p>Find the pots and tools to take care of your plants.</p>
+        </div>
+        
+        <div class="carousel-container">
+          <div class="carousel-wrapper">
+            <div class="carousel-slides">
+              <!-- Slide 4 -->
+              <div class="carousel-slide">
+                <div class="products-grid">
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Terra-planter.jpg" alt="Terra Classic Planter">
+                    </div>
+                    <div class="product-info">
+                      <h3>Terra Classic Planter</h3>
+                      <p>A timeless terracotta pot that allows roots to breathe and adds a rustic charm to any space.</p>
+                      <div class="product-footer">
+                        <span class="price">$24.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Self-watering.jpg" alt="Self-Watering Pot">
+                    </div>
+                    <div class="product-info">
+                      <h3>Self-Watering Pot</h3>
+                      <p>Sleek and modern, this pot comes with a hidden reservoir so your plant waters itself—perfect for busy plant parents.</p>
+                      <div class="product-footer">
+                        <span class="price">$19.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Hanging-there.jpg" alt="Hanging Macrame Pot Set">
+                    </div>
+                    <div class="product-info">
+                      <h3>Hanging Macrame Pot Set</h3>
+                      <p>A set of two boho-chic hanging planters made with natural cotton rope for that airy, floating greenery vibe.</p>
+                      <div class="product-footer">
+                        <span class="price">$29.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Ceramic.jpg" alt="Ceramic Glazed Duo">
+                    </div>
+                    <div class="product-info">
+                      <h3>Ceramic Glazed Duo</h3>
+                      <p>A glossy ceramic pair with rich, earthy colors—ideal for small succulents or herbs on kitchen windowsills.</p>
+                      <div class="product-footer">
+                        <span class="price">$34.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Slide 5 -->
+              <div class="carousel-slide">
+                <div class="products-grid">
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Concrete.jpg" alt="Concrete Minimalist Pot">
+                    </div>
+                    <div class="product-info">
+                      <h3>Concrete Minimalist Pot</h3>
+                      <p>Raw, edgy, and simple. A sturdy concrete planter for lovers of industrial design and low-maintenance greens.</p>
+                      <div class="product-footer">
+                        <span class="price">$49.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Metal-stand.jpg" alt="Geometric Metal Stand Pot">
+                    </div>
+                    <div class="product-info">
+                      <h3>Geometric Metal Stand Pot</h3>
+                      <p>A ceramic pot that sits in a gold or black metal frame—elevates your plant and your style.</p>
+                      <div class="product-footer">
+                        <span class="price">$22.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Bamboo-stand.jpg" alt="Bamboo Plant Stand">
+                    </div>
+                    <div class="product-info">
+                      <h3>Bamboo Plant Stand</h3>
+                      <p>A compact wooden stand that raises your pots off the ground for better light and airflow—fits most pot sizes.</p>
+                      <div class="product-footer">
+                        <span class="price">$18.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Coconut-husk.jpg" alt="Coconut Husk Liner">
+                    </div>
+                    <div class="product-info">
+                      <h3>Coconut Husk Liner</h3>
+                      <p>Natural and breathable liner for hanging baskets—keeps soil moist while letting roots breathe.</p>
+                      <div class="product-footer">
+                        <span class="price">$32.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Slide 6 -->
+              <div class="carousel-slide">
+                <div class="products-grid">
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Moisture-meter.jpeg" alt="Moisture Meter Stick">
+                    </div>
+                    <div class="product-info">
+                      <h3>Moisture Meter Stick</h3>
+                      <p>Never overwater again. This handy tool tells you when your plant is actually thirsty.</p>
+                      <div class="product-footer">
+                        <span class="price">$15.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Scissors.jpg" alt="Mini Pruning Scissors">
+                    </div>
+                    <div class="product-info">
+                      <h3>Mini Pruning Scissors</h3>
+                      <p>Precision stainless steel snips for trimming leaves, deadheading flowers, or shaping bonsais.</p>
+                      <div class="product-footer">
+                        <span class="price">$27.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Plant-food.jpg" alt="Plant Food Sticks">
+                    </div>
+                    <div class="product-info">
+                      <h3>Plant Food Sticks</h3>
+                      <p>Slow-release fertilizer sticks that keep your indoor plants fed and happy for up to 60 days.</p>
+                      <div class="product-footer">
+                        <span class="price">$23.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="product-card">
+                    <div class="product-image">
+                      <img src="images/Decorate-pebbles.jpg" alt="Decorative Pebble Topper Pack">
+                    </div>
+                    <div class="product-info">
+                      <h3>Decorative Pebble Topper Pack</h3>
+                      <p>A mix of polished stones to place on top of your soil—helps retain moisture and adds a polished finish.</p>
+                      <div class="product-footer">
+                        <span class="price">$12.99</span>
+                        <button class="btn-small">
+                          <i class="fas fa-shopping-bag"></i>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Carousel Navigation -->
+            <button class="carousel-btn prev-btn" aria-label="Previous slide">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="carousel-btn next-btn" aria-label="Next slide">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+          
+          <!-- Carousel Indicators -->
+          <div class="carousel-indicators">
+            <button class="indicator active" data-slide="0" aria-label="Go to slide 1"></button>
+            <button class="indicator" data-slide="1" aria-label="Go to slide 2"></button>
+            <button class="indicator" data-slide="2" aria-label="Go to slide 3"></button>
+          </div>
+        </div>
+        
+        <div class="view-all">
+          <button class="btn-outline">
+            View More
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+
+
+    <section id="Workshop" class="workshops">
+      <div class="container">
+        <div class="workshops-grid">
+          <div class="workshops-image">
+            <img src="images/plant-workshop_.jpg" alt="Plant workshop in progress">
+          </div>
+          <div class="workshops-content">
+            <h2>Join Our Workshops</h2>
+            <p>Learn everything you need to know about plant care, propagation, and styling in our hands-on workshops.</p>
+            <ul class="workshops-list">
+              <li><i class="fas fa-chevron-right"></i> Plant Care Basics for Beginners</li>
+              <li><i class="fas fa-chevron-right"></i> Creative Planting & Styling</li>
+              <li><i class="fas fa-chevron-right"></i> Propagation Techniques</li>
+              <li><i class="fas fa-chevron-right"></i> Seasonal Plant Care</li>
+            </ul>
+            <button class="btn-primary">View Upcoming Workshops</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+
+
+    <section id="Closing" class="cta">
+      <div class="container">
+        <div class="cta-content">
+          <h2>About Us</h2>
+          <p>At Green Haven, we believe that plants do more than beautify a space—they bring life, calm, and joy into every corner they touch. What started as a passion for indoor greenery has grown into a curated shop for beginners and plant lovers alike. From low-maintenance favorites to stylish pots and accessories, we’re here to make plant care simple and satisfying. Whether you're nurturing your first snake plant or styling your tenth monstera, we’ve got everything you need to grow with confidence.</p>
+          <div class="cta-buttons">
+            <button class="btn-primary">Shop Online</button>
+            <button class="btn-outline">Find Our Store</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+
+
+
+  <!-- Contact Form Section -->
+  <section id="contact" class="contact">
+    <div class="container">
+      <div class="section-header">
+        <h2>Get In Touch</h2>
+        <p>Have questions about plants, workshops, or need advice? We're here to help!</p>
+      </div>
+      
+      <div class="contact-container">
+        <div class="contact-info">
+          <div class="contact-info-item">
+            <div class="contact-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div>
+              <h3>Opening Hours</h3>
+              <p>Monday - Friday: 9am - 6pm<br>Saturday: 10am - 5pm<br>Sunday: 11am - 4pm</p>
+            </div>
+          </div>
+          
+          <div class="contact-info-item">
+            <div class="contact-icon">
+              <i class="fas fa-phone-alt"></i>
+            </div>
+            <div>
+              <h3>Call Us</h3>
+              <p>(555) 123-4567</p>
+            </div>
+          </div>
+          
+          <div class="contact-info-item">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <div>
+              <h3>Email Us</h3>
+              <p>hello@greenhaven.com</p>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="contact-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div>
+              <h3>Visit Our Store</h3>
+              <p>123 Green Street, Plant District<br>Cityville, State 12345</p>
+            </div>
+          </div>
+
+          <br>
+
+          <h3>Find Us on the Map</h3>
+          <div class="map-container">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.091449518635!2d-122.4194150846824!3d37.774929279759834!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8085809c13fb1e15%3A0x7c8b6de3ec31f2b6!2s123%20Green%20Street%2C%20Cityville%2C%20State%2012345!5e0!3m2!1sen!2sus!4v1712788888888" 
+              width="100%" 
+              height="200" 
+              style="border:0; border-radius: 12px;" 
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          </div>
+          
+          <div class="contact-social">
+            <h3>Follow Us</h3>
+            <div class="social-icons">
+              <a href="" class="whatsapp icons-size" aria-label="Whatsapp"><i class="fab fa-whatsapp"></i></a>
+              <a href="" class="facebook icons-size" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+              <a href="" class="instagram icons-size" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+              <a href="" class="twitter icons-size" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="contact-form-container">
+          <form id="contactForm" class="contact-form">
+            <div class="form-group">
+              <label for="name">First Name</label>
+              <input type="text" id="name" name="name" required>
+              <div class="error-message" id="nameError"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="name">Last Name</label>
+              <input type="text" id="name" name="name" required>
+              <div class="error-message" id="nameError"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required>
+              <div class="error-message" id="emailError"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <input type="text" id="subject" name="subject" required>
+              <div class="error-message" id="subjectError"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="message">Your Message to us</label>
+              <textarea id="message" name="message" rows="5" required></textarea>
+              <div class="error-message" id="messageError"></div>
+            </div>
+            
+            <div class="form-group">
+              <label class="checkbox-container">
+                <input type="checkbox" id="newsletter" name="newsletter">
+                <span class="checkmark"></span>
+                Subscribe to our newsletter for plant care tips and special offers
+              </label>
+            </div>
+            
+            <button type="submit" class="btn-primary submit-btn">
+              <span class="btn-text">Send Message</span>
+              <span class="btn-icon"><i class="fas fa-paper-plane"></i></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <div class="logo">
+            <i class="fas fa-leaf"></i>
+            <span>GreenHaven</span>
+          </div>
+          <p>Bringing nature into homes and workspaces since 2018.</p>
+        </div>
+        <div class="footer-links">
+          <h3>Shop</h3>
+          <ul>
+            <li><a href="#">All Plants</a></li>
+            <li><a href="#">Pots & Planters</a></li>
+            <li><a href="#">Care Accessories</a></li>
+            <li><a href="#">Gift Cards</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h3>Company</h3>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Workshops</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-newsletter">
+          <h3>Stay Updated</h3>
+          <p>Subscribe to our newsletter for care tips and special offers.</p>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Your email">
+            <button type="submit" class="btn-primary">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; <script>document.write(new Date().getFullYear())</script> GreenHaven Indoor Plant Boutique. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+
+
+
+
+  <script>
+    document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+      document.querySelector('nav').classList.toggle('active');
+    });
+  </script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init();
+  </script>
+  <script>
+  document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+    document.querySelector('nav').classList.toggle('active');
+  });
+  </script>
+
+</body>
+</html>
