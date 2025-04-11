@@ -168,10 +168,17 @@ nav a:hover {
   background-position: center;
 }
 
-video {
-  height: 950px;
-  width: auto;
+.hero-overlay {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
 }
+
+.video-wrapper video {
+  width: 100%;
+  height: auto;
+}
+
 
 .hero-content {
   position: absolute;
