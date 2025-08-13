@@ -18,7 +18,7 @@ services:
       - mariadb_data:/var/lib/mysql
 
   flask-app:
-    build: .
+    build: irbis3/flask-backend:v1.0
     depends_on:
       mariadb:
         condition: service_healthy
