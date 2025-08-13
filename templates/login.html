@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - GreenHaven Indoor Plant Boutique</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">
+        <a href="/">
+          <i class="fas fa-leaf"></i>
+          <span>GreenHaven</span>
+        </a>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="/#home">Home</a></li>
+          <li><a href="/#ShopPlants">Shop Plants</a></li>
+          <li><a href="/#Accessories">Pots & Accessories</a></li>
+          <li><a href="/#Workshop">Workshops</a></li>
+          <li><a href="/#contact">Contact</a></li>
+          <li><a href="/#Closing">About Us</a></li>
+        </ul>
+      </nav>
+      <!-- Removed header-buttons section entirely -->
+      <div class="mobile-menu-btn">
+        <i class="fas fa-bars"></i>
+      </div>
+    </div>
+  </header>
+
+  <main class="auth-main">
+    <div class="auth-container">
+      <div class="auth-content">
+        <div class="auth-header">
+          <h1>Welcome Back</h1>
+          <p>Sign in to your GreenHaven account</p>
+        </div>
+
+        <div class="auth-form-container">
+          <form id="loginForm" class="auth-form" method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" required>
+              <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="password">Password</label>
+              <div class="password-input-container">
+                <input type="password" id="password" name="password" required>
+                <button type="button" class="password-toggle" id="passwordToggle">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+              <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <div class="form-options">
+              <label class="checkbox-container">
+                <input type="checkbox" id="remember" name="remember">
+                <span class="checkmark"></span>
+                Remember me
+              </label>
+              <a href="#" class="link forgot-password">Forgot password?</a>
+            </div>
+
+            <!-- Error/Success Messages Container -->
+            <div id="loginMessages" class="form-messages" style="display: none;"></div>
+
+            <button type="submit" class="btn-primary auth-submit-btn">
+              <span class="btn-text">Sign In</span>
+              <span class="btn-icon"><i class="fas fa-sign-in-alt"></i></span>
+            </button>
+
+            <!-- Keep original success/error divs for styling compatibility -->
+            <div id="loginSuccess" class="form-success" style="display: none;">
+              <i class="fas fa-check-circle"></i>
+              <p>Welcome back! Redirecting to your dashboard...</p>
+            </div>
+
+            <div id="loginError" class="form-error" style="display: none;">
+              <i class="fas fa-exclamation-circle"></i>
+              <p>Invalid email or password. Please try again.</p>
+            </div>
+          </form>
+
+          <div class="auth-divider">
+          </div>
+
+          <div class="auth-footer">
+            <p>Don't have an account? <a href="{{ url_for('signup') }}" class="link">Sign up here</a></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-image">
+        <img src="{{ url_for('static', filename='images/tree.jpg') }}" alt="Beautiful indoor plants">
+        <div class="auth-image-overlay">
+          <div class="auth-image-content">
+            <h2>Your Plant Journey Continues</h2>
+            <p>Access your personalized plant care recommendations, order history, and exclusive member benefits.</p>
+            <div class="auth-features">
+              <div class="auth-feature">
+                <i class="fas fa-heart"></i>
+                <span>Saved favorites</span>
+              </div>
+              <div class="auth-feature">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Care reminders</span>
+              </div>
+              <div class="auth-feature">
+                <i class="fas fa-star"></i>
+                <span>Member rewards</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <div class="logo">
+            <i class="fas fa-leaf"></i>
+            <span>GreenHaven</span>
+          </div>
+          <p>Bringing nature into homes and workspaces since 2018.</p>
+        </div>
+        <div class="footer-links">
+          <h3>Shop</h3>
+          <ul>
+            <li><a href="#">All Plants</a></li>
+            <li><a href="#">Pots & Planters</a></li>
+            <li><a href="#">Care Accessories</a></li>
+            <li><a href="#">Gift Cards</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h3>Company</h3>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Workshops</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-newsletter">
+          <h3>Stay Updated</h3>
+          <p>Subscribe to our newsletter for care tips and special offers.</p>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Your email">
+            <button type="submit" class="btn-primary">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; <script>document.write(new Date().getFullYear())</script> GreenHaven Indoor Plant Boutique. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts - removed header-auth.js since we're not using dynamic buttons -->
+  <script src="{{ url_for('static', filename='login.js') }}"></script>
+  <script>
+    // Password toggle functionality
+    document.getElementById('passwordToggle').addEventListener('click', function() {
+      const passwordInput = document.getElementById('password');
+      const icon = this.querySelector('i');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+
+    // Simple mobile menu toggle
+    document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+      document.querySelector('nav').classList.toggle('active');
+    });
+  </script>
+</body>
+</html>

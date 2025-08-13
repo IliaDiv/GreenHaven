@@ -4,32 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GreenHaven - Indoor Plant Boutique</title>
-  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <script src="script.js"></script>
+  <script src="{{ url_for('static', filename='header-auth.js') }}"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </head>
 
 
 <body>
-  <header>
+<header>
     <div class="container">
       <div class="logo">
-        <i class="fas fa-leaf"></i>
-        <span>GreenHaven</span>
+        <a href="/">
+          <i class="fas fa-leaf"></i>
+          <span>GreenHaven</span>
+        </a>
       </div>
       <nav>
         <ul>
-          <li><a href="#Home">Home</a></li>
-          <li><a href="#ShopPlants">Shop Plants</a></li>
-          <li><a href="#Accessories">Pots & Accessories</a></li>
-          <li><a href="#Workshop">Workshops</a></li>
-          <li><a href="#Closing">About Us</a></li>
+          <li><a href="/#Home">Home</a></li>
+          <li><a href="/#ShopPlants">Shop Plants</a></li>
+          <li><a href="/#Accessories">Pots & Accessories</a></li>
+          <li><a href="/#Workshop">Workshops</a></li>
+          <li><a href="/#contact">Contact</a></li>
+          <li><a href="/#Closing">About Us</a></li>
         </ul>
       </nav>
-      <div class="header-buttons">
-        <button class="btn-outline">Sign In</button>
-        <button class="btn-primary">Shop Now</button>
+      <div class="header-buttons" id="headerButtons">
+        <!-- Dynamic buttons will be inserted here -->
       </div>
       <div class="mobile-menu-btn">
         <i class="fas fa-bars"></i>
@@ -44,7 +47,7 @@
   <main>
     <section id="Home" class="hero">
       <div class="hero-overlay">
-        <video src="videos/bg-video.mp4" autoplay muted loop></video>
+        <video src="{{ url_for('static', filename='videos/bg-video.mp4') }}" autoplay muted loop></video>
       </div>
       <div class="hero-content">
         <div class="hero-text">
@@ -116,7 +119,7 @@
                 <div class="products-grid">
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/snake-plant-basic.jpg" alt="Snake Plant">
+                      <img src="{{ url_for('static', filename='images/snake-plant-basic.jpg') }}">alt="Snake Plant">
                     </div>
                     <div class="product-info">
                       <h3>Snake Plant</h3>
@@ -132,7 +135,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Pothos.jpg" alt="Pothos">
+                      <img src="{{ url_for('static', filename='images/Pothos.jpg') }}" alt="Pothos">
                     </div>
                     <div class="product-info">
                       <h3>Pothos</h3>
@@ -148,7 +151,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/zz_plant.jpg" alt="ZZ Plant">
+                      <img src="{{ url_for('static', filename='images/zz_plant.jpg') }}" alt="ZZ Plant">
                     </div>
                     <div class="product-info">
                       <h3>ZZ Plant</h3>
@@ -164,7 +167,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/monastera-basic.jpg" alt="Monstera">
+                      <img src="{{ url_for('static', filename='images/monastera-basic.jpg') }}" alt="Monstera">
                     </div>
                     <div class="product-info">
                       <h3>Monstera</h3>
@@ -186,7 +189,7 @@
                 <div class="products-grid">
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Fiddle-leaf.jpg" alt="Fiddle Leaf Fig">
+                      <img src="{{ url_for('static', filename='images/Fiddle-leaf.jpg') }}" alt="Fiddle Leaf Fig">
                     </div>
                     <div class="product-info">
                       <h3>Fiddle Leaf Fig</h3>
@@ -202,7 +205,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Peace-lily.jpg" alt="Peace Lily">
+                      <img src="{{ url_for('static', filename='images/Peace-lily.jpg') }}" alt="Peace Lily">
                     </div>
                     <div class="product-info">
                       <h3>Peace Lily</h3>
@@ -218,7 +221,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Spider-plant.jpg" alt="Spider Plant">
+                      <img src="{{ url_for('static', filename='images/Spider-plant.jpg') }}" alt="Spider Plant">
                     </div>
                     <div class="product-info">
                       <h3>Spider Plant</h3>
@@ -234,7 +237,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Rubber-plant.jpg" alt="Rubber Plant">
+                      <img src="{{ url_for('static', filename='images/Rubber-plant.jpg') }}" alt="Rubber Plant">
                     </div>
                     <div class="product-info">
                       <h3>Rubber Plant</h3>
@@ -256,7 +259,7 @@
                 <div class="products-grid">
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Aloe-vera.jpg" alt="Aloe Vera">
+                      <img src="{{ url_for('static', filename='images/Aloe-vera.jpg') }}" alt="Aloe Vera">
                     </div>
                     <div class="product-info">
                       <h3>Aloe Vera</h3>
@@ -272,7 +275,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Boston-fern.jpg" alt="Boston Fern">
+                      <img src="{{ url_for('static', filename='images/Boston-fern.jpg') }}" alt="Boston Fern">
                     </div>
                     <div class="product-info">
                       <h3>Boston Fern</h3>
@@ -288,7 +291,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Chinese-monkey.jpg" alt="Chinese Money Plant">
+                      <img src="{{ url_for('static', filename='images/Chinese-monkey.jpg') }}" alt="Chinese Money Plant">
                     </div>
                     <div class="product-info">
                       <h3>Chinese Money Plant</h3>
@@ -304,7 +307,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Air-plant.jpg" alt="Air Plant">
+                      <img src="{{ url_for('static', filename='images/Air-plant.jpg') }}" alt="Air Plant">
                     </div>
                     <div class="product-info">
                       <h3>Air Plant</h3>
@@ -368,7 +371,7 @@
                 <div class="products-grid">
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Terra-planter.jpg" alt="Terra Classic Planter">
+                      <img src="{{ url_for('static', filename='images/Terra-planter.jpg') }}" alt="Terra Classic Planter">
                     </div>
                     <div class="product-info">
                       <h3>Terra Classic Planter</h3>
@@ -384,7 +387,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Self-watering.jpg" alt="Self-Watering Pot">
+                      <img src="{{ url_for('static', filename='images/Self-watering.jpg') }}" alt="Self-Watering Pot">
                     </div>
                     <div class="product-info">
                       <h3>Self-Watering Pot</h3>
@@ -400,7 +403,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Hanging-there.jpg" alt="Hanging Macrame Pot Set">
+                      <img src="{{ url_for('static', filename='images/Hanging-there.jpg') }}" alt="Hanging Macrame Pot Set">
                     </div>
                     <div class="product-info">
                       <h3>Hanging Macrame Pot Set</h3>
@@ -416,7 +419,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Ceramic.jpg" alt="Ceramic Glazed Duo">
+                      <img src="{{ url_for('static', filename='images/Ceramic.jpg') }}" alt="Ceramic Glazed Duo">
                     </div>
                     <div class="product-info">
                       <h3>Ceramic Glazed Duo</h3>
@@ -438,7 +441,7 @@
                 <div class="products-grid">
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Concrete.jpg" alt="Concrete Minimalist Pot">
+                      <img src="{{ url_for('static', filename='images/Concrete.jpg') }}" alt="Concrete Minimalist Pot">
                     </div>
                     <div class="product-info">
                       <h3>Concrete Minimalist Pot</h3>
@@ -454,7 +457,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Metal-stand.jpg" alt="Geometric Metal Stand Pot">
+                      <img src="{{ url_for('static', filename='images/Metal-stand.jpg') }}" alt="Geometric Metal Stand Pot">
                     </div>
                     <div class="product-info">
                       <h3>Geometric Metal Stand Pot</h3>
@@ -470,7 +473,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Bamboo-stand.jpg" alt="Bamboo Plant Stand">
+                      <img src="{{ url_for('static', filename='images/Bamboo-stand.jpg') }}" alt="Bamboo Plant Stand">
                     </div>
                     <div class="product-info">
                       <h3>Bamboo Plant Stand</h3>
@@ -486,7 +489,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Coconut-husk.jpg" alt="Coconut Husk Liner">
+                      <img src="{{ url_for('static', filename='images/Coconut-husk.jpg') }}" alt="Coconut Husk Liner">
                     </div>
                     <div class="product-info">
                       <h3>Coconut Husk Liner</h3>
@@ -508,7 +511,7 @@
                 <div class="products-grid">
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Moisture-meter.jpeg" alt="Moisture Meter Stick">
+                      <img src="{{ url_for('static', filename='images/Moisture-meter.jpeg') }}" alt="Moisture Meter Stick">
                     </div>
                     <div class="product-info">
                       <h3>Moisture Meter Stick</h3>
@@ -524,7 +527,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Scissors.jpg" alt="Mini Pruning Scissors">
+                      <img src="{{ url_for('static', filename='images/Scissors.jpg') }}" alt="Mini Pruning Scissors">
                     </div>
                     <div class="product-info">
                       <h3>Mini Pruning Scissors</h3>
@@ -540,7 +543,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Plant-food.jpg" alt="Plant Food Sticks">
+                      <img src="{{ url_for('static', filename='images/Plant-food.jpg') }}" alt="Plant Food Sticks">
                     </div>
                     <div class="product-info">
                       <h3>Plant Food Sticks</h3>
@@ -556,7 +559,7 @@
                   </div>
                   <div class="product-card">
                     <div class="product-image">
-                      <img src="images/Decorate-pebbles.jpg" alt="Decorative Pebble Topper Pack">
+                      <img src="{{ url_for('static', filename='images/Decorate-pebbles.jpg') }}" alt="Decorative Pebble Topper Pack">
                     </div>
                     <div class="product-info">
                       <h3>Decorative Pebble Topper Pack</h3>
@@ -607,7 +610,7 @@
       <div class="container">
         <div class="workshops-grid">
           <div class="workshops-image">
-            <img src="images/plant-workshop_.jpg" alt="Plant workshop in progress">
+            <img src="{{ url_for('static', filename='images/plant-workshop_.jpg') }}" alt="Plant workshop in progress">
           </div>
           <div class="workshops-content">
             <h2>Join Our Workshops</h2>
@@ -726,13 +729,13 @@
           <form id="contactForm" class="contact-form">
             <div class="form-group">
               <label for="name">First Name</label>
-              <input type="text" id="name" name="name" required>
+              <input type="text" id="name" name="f_name" required>
               <div class="error-message" id="nameError"></div>
             </div>
 
             <div class="form-group">
               <label for="name">Last Name</label>
-              <input type="text" id="name" name="name" required>
+              <input type="text" id="name" name="l_name" required>
               <div class="error-message" id="nameError"></div>
             </div>
             

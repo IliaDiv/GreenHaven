@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - GreenHaven Indoor Plant Boutique</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="{{ url_for('static', filename='auth.js') }}"></script>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">
+        <a href="/">
+          <i class="fas fa-leaf"></i>
+          <span>GreenHaven</span>
+        </a>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="/#home">Home</a></li>
+          <li><a href="/#ShopPlants">Shop Plants</a></li>
+          <li><a href="/#Accessories">Pots & Accessories</a></li>
+          <li><a href="/#Workshop">Workshops</a></li>
+          <li><a href="/#contact">Contact</a></li>
+          <li><a href="/#Closing">About Us</a></li>
+        </ul>
+      </nav>
+      <div class="header-buttons" id="headerButtons">
+        <!-- Dynamic buttons will be inserted here -->
+      </div>
+      <div class="mobile-menu-btn">
+        <i class="fas fa-bars"></i>
+      </div>
+    </div>
+  </header>
+
+  <main class="auth-main">
+    <div class="auth-container">
+      <div class="auth-content">
+        <div class="auth-header">
+          <h1>Join GreenHaven</h1>
+          <p>Create your account and start your plant journey with us</p>
+        </div>
+
+        <div class="auth-form-container">
+          <form id="signupForm" class="auth-form" method="POST" action="{{ url_for('register') }}" id="signupForm" class="auth-form" method="POST" action="{{ url_for('register') }}" onsubmit="console.log('Form submitting...')">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" name="firstName" required>
+              <div class="error-message" id="firstNameError"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" name="lastName" required>
+              <div class="error-message" id="lastNameError"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" required>
+              <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="password">Password</label>
+              <div class="password-input-container">
+                <input type="password" id="password" name="password" required>
+                <button type="button" class="password-toggle" id="passwordToggle">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+              <div class="password-strength" id="passwordStrength">
+                <div class="strength-bar">
+                  <div class="strength-fill"></div>
+                </div>
+                <span class="strength-text">Password strength</span>
+              </div>
+              <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPassword">Confirm Password</label>
+              <div class="password-input-container">
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <button type="button" class="password-toggle" id="confirmPasswordToggle">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+              <div class="error-message" id="confirmPasswordError"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-container">
+                <input type="checkbox" id="newsletter" name="newsletter" checked>
+                <span class="checkmark"></span>
+                Subscribe to our newsletter for plant care tips and special offers
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-container">
+                <input type="checkbox" id="terms" required>
+                <span class="checkmark"></span>
+                I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a>
+              </label>
+              <div class="error-message" id="termsError"></div>
+            </div>
+            
+            
+            <button type="submit" class="btn-primary auth-submit-btn">
+              <span class="btn-text">Create Account</span>
+              <span class="btn-icon"><i class="fas fa-user-plus"></i></span>
+            </button>
+
+            <div id="signupSuccess" class="form-success">
+              <i class="fas fa-check-circle"></i>
+              <p>Account created successfully! Welcome to GreenHaven!</p>
+            </div>
+          </form>
+
+          <div class="auth-divider">
+            <span>or sign up with</span>
+          </div>
+
+          <div class="auth-footer">
+            <p>Already have an account? <a href="login.html" class="link">Sign in here</a></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-image">
+        <img src="{{ url_for('static', filename='images/signup.jpg') }}" alt="Beautiful indoor plants">
+        <div class="auth-image-overlay">
+          <div class="auth-image-content">
+            <h2>Welcome to Our Plant Community</h2>
+            <p>Join thousands of plant lovers who trust GreenHaven for their indoor gardening needs.</p>
+            <div class="auth-features">
+              <div class="auth-feature">
+                <i class="fas fa-leaf"></i>
+                <span>Expert plant advice</span>
+              </div>
+              <div class="auth-feature">
+                <i class="fas fa-shipping-fast"></i>
+                <span>Fast, safe delivery</span>
+              </div>
+              <div class="auth-feature">
+                <i class="fas fa-users"></i>
+                <span>Supportive community</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <div class="logo">
+            <i class="fas fa-leaf"></i>
+            <span>GreenHaven</span>
+          </div>
+          <p>Bringing nature into homes and workspaces since 2018.</p>
+        </div>
+        <div class="footer-links">
+          <h3>Shop</h3>
+          <ul>
+            <li><a href="#">All Plants</a></li>
+            <li><a href="#">Pots & Planters</a></li>
+            <li><a href="#">Care Accessories</a></li>
+            <li><a href="#">Gift Cards</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h3>Company</h3>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Workshops</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-newsletter">
+          <h3>Stay Updated</h3>
+          <p>Subscribe to our newsletter for care tips and special offers.</p>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Your email">
+            <button type="submit" class="btn-primary">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; <script>document.write(new Date().getFullYear())</script> GreenHaven Indoor Plant Boutique. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  
+  <script>
+    document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+      document.querySelector('nav').classList.toggle('active');
+    });
+  </script>
+</body>
+</html>
