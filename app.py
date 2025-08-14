@@ -1,10 +1,11 @@
 from flask import Flask, render_template, jsonify, request, redirect, url_for, session
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import timedelta
+from datetime import timedelta, datetime
 import mariadb
 import os
 import sys
+import socket
 
 app = Flask(__name__)
 # Use a fixed secret key for persistent sessions across server restarts
@@ -12,7 +13,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here-change-in-production')
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['PERMANENT_SESSION_LIFETIME'] = 86400  # 24 hours
+app.config['PERMANENT_SESSION_LIFETIME'] = 30  # 30 
 
 load_dotenv()
 DB_USER = os.getenv('DB_USER')
@@ -36,7 +37,7 @@ def get_connection():
             user=DB_USER,
             password=DB_PASSWORD,
             database=DB_NAME,
-            port=3306  # Explicitly set port
+            port=3306
         )
         print("Database connection successful")
         return conn
@@ -56,6 +57,7 @@ def init_db():
             password=DB_PASSWORD,
             port=3306
         )
+        print("Connected...")
         cur = conn.cursor()
         
         # Create database if it doesn't exist
@@ -357,6 +359,40 @@ def check_session():
             'logged_in': False,
             'user': None
         })
+    
+SERVER_ID = os.getenv('SERVER_ID', 'unknown')
+HOSTNAME = socket.gethostname()
+
+@app.route('/health')
+def health_check():
+    """Health check endpoint for load balancer"""
+    try:
+        # Test database connection
+        conn = get_connection()
+        if conn:
+            conn.close()
+            db_status = "healthy"
+        else:
+            db_status = "unhealthy"
+    except Exception as e:
+        db_status = f"error: {str(e)}"
+    
+    return jsonify({
+        'status': 'healthy' if db_status == 'healthy' else 'unhealthy',
+        'server_id': SERVER_ID,
+        'hostname': HOSTNAME,
+        'database': db_status,
+        'timestamp': datetime.now().isoformat()
+    })
+
+@app.route('/server-info')
+def server_info():
+    """Show which server is responding"""
+    return jsonify({
+        'server_id': SERVER_ID,
+        'hostname': HOSTNAME,
+        'ip': request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    })
 
 
 @app.route('/test-db')
@@ -416,4 +452,4 @@ def get_items():
 if __name__ == "__main__":
     print("\n=== Starting Flask Application ===")
     init_db()
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="127.0.0.1", port=5000)
