@@ -41,14 +41,14 @@ jobs:
           sleep 10
           
           echo "🔍 Checking Flask app status..."
-          docker-compose exec -T flask-app ps aux | grep python || echo "Python process not found"
+          docker compose exec -T flask-app ps aux | grep python || echo "Python process not found"
           
           echo "📋 Flask logs:"
-          docker-compose logs flask-app
+          docker compose logs flask-app
 
           if ! docker-compose exec -T flask-app curl -f http://localhost:5000/health 2>/dev/null; then
             echo "⚠️ Flask not responding, checking why..."
-            docker-compose exec -T flask-app python app.py &
+            docker compose exec -T flask-app python app.py &
             sleep 5
           fi
 
