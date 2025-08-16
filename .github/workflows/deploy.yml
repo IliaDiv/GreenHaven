@@ -1,0 +1,145 @@
+name: From Docker build and push to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+      
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+          
+      - name: Building TEST image
+        run: docker build -t ${{ vars.DOCKER_REPO }}:latest
+
+      - name: Running docker-compose
+        run: |
+          docker-compose up --build -d
+          sleep 15
+
+      - name: Test Flask healthcheck
+        run: |
+          curl -f http://localhost:5000/health
+          curl -f http://localhost:5000/
+          echo "Health and Main endpoints are healthy"
+      
+      - name: Build and push LATEST version
+        if: success()
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ vars.DOCKER_REPO }}:latest
+
+      - name: Cleanup
+        run: |
+          docker-compose down -v
+          docker system prune -f
+          
+  deploy-to-aws:
+    runs-on: ubuntu-latest
+    needs: [docker]
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.3.1
+        with:
+          aws-region: eu-central-1
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub-OIDC
+          role-session-name: RealizingDocker
+          aws_default_region: eu-central-1
+
+    strategy:
+      matrix:
+        instance: [1, 2]
+        include:
+        - instance: 1
+          instance_name: server-1
+          create_shared_resources: true
+        - instance: 2
+          instance_name: server-2
+          create_shared_resources: false
+          
+          aws_ec2_ami_id: ami-00a3c0b6a665fc70a
+          aws_ec2_instance_type: t2.micro
+          aws_ec2_security_group_name: servers
+          aws_ec2_instance_public_ip: false
+          aws_ec2_port_list: 5000
+
+          aws_r53_enable: true
+          aws_r53_domain_name: iliadiv.online
+          aws_r53_sub_domain_name: www
+          aws_r53_cert_arn: ${{ secrets.ACM_ARN }}
+
+          aws_elb_security_group_name: nginx
+          aws_elb_app_port: 5000
+          aws_elb_listen_port: 80,443
+          aws_elb_app_protocol: http,https
+          aws_elb_healthcheck: "HTTP:5000"
+          
+        - name: Wait for deployment propagation
+          run: sleep 120
+
+  verify-deployment:
+    needs: [docker, deploy-to-aws]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Wait for deployment to stabilize
+      run: |
+        echo "Waiting for deployment to stabilize..."
+        sleep 60
+
+    - name: Verify application health
+      run: |
+        DOMAIN="www.iliadiv.online"
+        
+        echo "Testing deployment..."
+        if curl -f --max-time 30 "http://$DOMAIN/health" 2>/dev/null; then
+          echo "HTTP health check SUCCESS"
+        else
+          echo "HTTP health check FAIL"
+        fi
+        
+        if curl -f --max-time 30 "https://$DOMAIN/health" 2>/dev/null; then
+          echo "HTTPS health check SUCCESS"
+        else
+          echo "HTTPS health check FAIL"
+        fi
+
+  notify:
+    needs: [docker, deploy-to-aws, verify-deployment]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Send deployment notification
+      run: |
+        STATUS="${{ job.status }}"
+        
+        if [ "$STATUS" = "success" ]; then
+          MESSAGE="Deployment SUCCESS"
+        else
+          MESSAGE="Deployment FAIL"
+        fi
+        
+        echo -e "$MESSAGE"
+        
+        
