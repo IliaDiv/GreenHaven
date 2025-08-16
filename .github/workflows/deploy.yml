@@ -63,13 +63,9 @@ jobs:
           curl -f http://localhost:5000/
           echo "Health and Main endpoints are healthy"
       
-      - name: Build and push LATEST version
+      - name: Push LATEST version
         if: success()
-        uses: docker/build-push-action@v6
-        with:
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ vars.DOCKER_REPO }}:latest
+        run: docker push ${{ vars.DOCKER_REPO }}:latest
 
       - name: Cleanup
         run: |
