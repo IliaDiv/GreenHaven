@@ -32,12 +32,17 @@ jobs:
         run: docker build -t ${{ vars.DOCKER_REPO }}:latest .
 
       - name: Running docker-compose
+        env:
+          DB_ROOT: ${{ vars.DB_ROOT }}
+          DB_NAME: ${{ vars.DB_NAME }}
+          DB_USER: ${{ vars.DB_USER }}
+          DB_PASSWORD: ${{ vars.DB_PASSWORD }}
         run: |
-          DB_USER=${{ vars.DB_USER }}
-          DB_DB_PASSWORD=${{ vars.DB_PASSWORD }}
-          DB_DB_NAME=${{ vars.DB_NAME }}
-          DB_ROOT=${{ vars.DB_ROOT }}
-          DB_USER="$DB_USER" DB_PASSWORD="$DB_PASSWORD" DB_NAME="$DB_NAME" DB_ROOT="$DB_ROOT" docker compose up --build -d
+          DB_ROOT="$DB_ROOT" \
+          DB_NAME="$DB_NAME" \
+          DB_USER="$DB_USER" \
+          DB_PASSWORD="$DB_PASSWORD" \
+          docker compose up -d
           sleep 10
           
           echo "🔍 Checking Flask app status..."
