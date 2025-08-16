@@ -87,7 +87,7 @@ jobs:
           aws_r53_enable: true
           aws_r53_domain_name: iliadiv.online
           aws_r53_sub_domain_name: www
-          aws_r53_cert_arn: ${{ secrets.ACM_ARN }}
+          aws_r53_cert_arn: ${{ vars.ACM_ARN }}
 
           aws_elb_security_group_name: nginx
           aws_elb_app_port: 5000
