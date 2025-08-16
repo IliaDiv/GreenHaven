@@ -38,7 +38,19 @@ jobs:
           DB_DB_NAME=${{ vars.DB_NAME }}
           DB_ROOT=${{ vars.DB_ROOT }}
           DB_USER="$DB_USER" DB_PASSWORD="$DB_PASSWORD" DB_NAME="$DB_NAME" DB_ROOT="$DB_ROOT" docker compose up --build -d
-          sleep 15
+          sleep 10
+          
+          echo "🔍 Checking Flask app status..."
+          docker-compose exec -T flask-app ps aux | grep python || echo "Python process not found"
+          
+          echo "📋 Flask logs:"
+          docker-compose logs flask-app
+
+          if ! docker-compose exec -T flask-app curl -f http://localhost:5000/health 2>/dev/null; then
+            echo "⚠️ Flask not responding, checking why..."
+            docker-compose exec -T flask-app python app.py &
+            sleep 5
+          fi
 
       - name: Test Flask healthcheck
         run: |
