@@ -33,7 +33,11 @@ jobs:
 
       - name: Running docker-compose
         run: |
-          docker compose up --build -d
+          DB_USER=${{ vars.DB_USER }}
+          DB_DB_PASSWORD=${{ vars.DB_PASSWORD }}
+          DB_DB_NAME=${{ vars.DB_NAME }}
+          DB_ROOT=${{ vars.DB_ROOT }}
+          DB_USER="$DB_USER" DB_PASSWORD="$DB_PASSWORD" DB_NAME="$DB_NAME" DB_ROOT="$DB_ROOT" docker compose up --build -d
           sleep 15
 
       - name: Test Flask healthcheck
