@@ -33,7 +33,7 @@ jobs:
 
       - name: Running docker-compose
         run: |
-          docker-compose up --build -d
+          docker compose up --build -d
           sleep 15
 
       - name: Test Flask healthcheck
@@ -52,7 +52,7 @@ jobs:
 
       - name: Cleanup
         run: |
-          docker-compose down -v
+          docker compose down -v
           docker system prune -f
           
   deploy-to-aws:
