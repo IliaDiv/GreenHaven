@@ -11,14 +11,14 @@ services:
       - "3306:3306"
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 2s
-      timeout: 2s
+      interval: 5s
+      timeout: 5s
       retries: 10
     volumes: 
       - mariadb_data:/var/lib/mysql
 
   flask-app:
-    build: irbis3/flask-backend:v1.1
+    image: irbis3/flask-backend:latest
     depends_on:
       mariadb:
         condition: service_healthy
