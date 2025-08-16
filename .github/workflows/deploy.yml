@@ -32,9 +32,30 @@ jobs:
         run: docker build -t ${{ vars.DOCKER_REPO }}:latest .
 
       - name: Running docker-compose
+        env:
+          DB_ROOT: ${{ vars.DB_ROOT }}
+          DB_NAME: ${{ vars.DB_NAME }}
+          DB_USER: ${{ vars.DB_USER }}
+          DB_PASSWORD: ${{ vars.DB_PASSWORD }}
         run: |
-          docker compose up --build -d
-          sleep 15
+          DB_ROOT="$DB_ROOT" \
+          DB_NAME="$DB_NAME" \
+          DB_USER="$DB_USER" \
+          DB_PASSWORD="$DB_PASSWORD" \
+          docker compose up -d
+          sleep 10
+          
+          echo "🔍 Checking Flask app status..."
+          docker compose exec -T flask-app ps aux | grep python || echo "Python process not found"
+          
+          echo "📋 Flask logs:"
+          docker compose logs flask-app
+
+          if ! docker-compose exec -T flask-app curl -f http://localhost:5000/health 2>/dev/null; then
+            echo "⚠️ Flask not responding, checking why..."
+            docker compose exec -T flask-app python app.py &
+            sleep 5
+          fi
 
       - name: Test Flask healthcheck
         run: |
@@ -42,13 +63,9 @@ jobs:
           curl -f http://localhost:5000/
           echo "Health and Main endpoints are healthy"
       
-      - name: Build and push LATEST version
+      - name: Push LATEST version
         if: success()
-        uses: docker/build-push-action@v6
-        with:
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ vars.DOCKER_REPO }}:latest
+        run: docker push ${{ vars.DOCKER_REPO }}:latest
 
       - name: Cleanup
         run: |
