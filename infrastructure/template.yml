@@ -54,15 +54,15 @@ Resources:
       InternetGatewayId: !Ref InternetGateway
 
   DBSubnetGroup:
-  Type: AWS::RDS::DBSubnetGroup
-  Properties:
-    DBSubnetGroupDescription: Subnet group for RDS database
-    SubnetIds:
-      - !Ref PrivateSubnet1
-      - !Ref PrivateSubnet2
-    Tags:
-      - Key: Name
-        Value: DB-SubnetGroup
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for RDS database
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+      Tags:
+        - Key: Name
+          Value: DB-SubnetGroup
 
   DatabaseSG:
     Type: AWS::EC2::SecurityGroup
@@ -81,26 +81,26 @@ Resources:
           Value: DatabaseSG
 
   Database:
-  Type: AWS::RDS::DBInstance
-  DeletionPolicy: Snapshot
-  Properties:
-    DBInstanceIdentifier: myapp-database
-    DBInstanceClass: db.t3.micro
-    Engine: mysql
-    EngineVersion: '8.0'
-    MasterUsername: admin
-    MasterUserPassword: !Ref DBPassword
-    AllocatedStorage: 20
-    StorageType: gp2
-    DBSubnetGroupName: !Ref DBSubnetGroup
-    VPCSecurityGroups:
-      - !Ref DatabaseSG
-    BackupRetentionPeriod: 7
-    MultiAZ: false
-    PubliclyAccessible: false
-    Tags:
-      - Key: Name
-        Value: MyApp-Database
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    Properties:
+      DBInstanceIdentifier: myapp-database
+      DBInstanceClass: db.t3.micro
+      Engine: mysql
+      EngineVersion: '8.0'
+      MasterUsername: admin
+      MasterUserPassword: !Ref DBPassword
+      AllocatedStorage: 20
+      StorageType: gp2
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups:
+        - !Ref DatabaseSG
+      BackupRetentionPeriod: 7
+      MultiAZ: false
+      PubliclyAccessible: false
+      Tags:
+        - Key: Name
+          Value: MyApp-Database
 
   LoadBalancerSG:
     Type: AWS::EC2::SecurityGroup
