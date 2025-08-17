@@ -38,8 +38,9 @@ jobs:
           DB_NAME: ${{ vars.DB_NAME }}
           DB_USER: ${{ vars.DB_USER }}
           DB_PASSWORD: ${{ vars.DB_PASSWORD }}
+          DB_HOST: localhost
         run: |
-          DB_ROOT="$DB_ROOT" \ DB_NAME="$DB_NAME" \DB_USER="$DB_USER" \ DB_PASSWORD="$DB_PASSWORD" \ docker run -d --name test
+          docker compose up -d
           sleep 10
           
           echo "Checking Flask app status..."
@@ -65,7 +66,7 @@ jobs:
 
       - name: Cleanup
         run: |
-          docker stop test
+          docker compose down
           docker system prune -f
           
   deploy-to-aws:
