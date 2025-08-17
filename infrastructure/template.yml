@@ -401,7 +401,6 @@ Resources:
       BackupRetentionPeriod: 7
       MultiAZ: false
       PubliclyAccessible: false
-      DeletionProtection: true
       Tags:
         - Key: Name
           Value: MyApp-Database
