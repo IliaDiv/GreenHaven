@@ -111,13 +111,13 @@ jobs:
         id: stack-outputs
         run: |
           LB_URL=$(aws cloudformation describe-stacks \
-            --stack-name ${{ env.STACK_NAME }} \
+            --stack-name main \
             --query "Stacks[0].Outputs[?OutputKey=='LoadBalancerURL'].OutputValue" \
             --output text)
           echo "lb_url=$LB_URL" >> $GITHUB_OUTPUT
           
           LB_DNS=$(aws cloudformation describe-stacks \
-            --stack-name ${{ env.STACK_NAME }} \
+            --stack-name main \
             --query "Stacks[0].Outputs[?OutputKey=='LoadBalancerDNS'].OutputValue" \
             --output text)
           echo "lb_dns=$LB_DNS" >> $GITHUB_OUTPUT
