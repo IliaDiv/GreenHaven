@@ -341,6 +341,41 @@ Resources:
             mkdir -p ~/.docker/cli-plugins/
             curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
             chmod +x ~/.docker/cli-plugins/docker-compose
+            cat << 'EOF' > /usr/local/bin/ec2-metadata.sh
+            #!/bin/bash
+            
+            TOKEN_TTL=21600
+            TOKEN=""
+            TOKEN_EXPIRY=0
+            
+            get_token() {
+              TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" \
+                      -H "X-aws-ec2-metadata-token-ttl-seconds: $TOKEN_TTL")
+              TOKEN_EXPIRY=$(($(date +%s) + TOKEN_TTL - 60))
+            }
+            
+            get_metadata() {
+              local path="$1"
+            
+              if [[ -z "$TOKEN" || $(date +%s) -ge $TOKEN_EXPIRY ]]; then
+                get_token
+              fi
+            
+              curl -s -H "X-aws-ec2-metadata-token: $TOKEN" \
+                   "http://169.254.169.254/latest/meta-data/$path"
+            }
+            
+            INSTANCE_ID=$(get_metadata "instance-id")
+            INSTANCE_TYPE=$(get_metadata "instance-type")
+            LOCAL_IPV4=$(get_metadata "local-ipv4")
+            
+            echo "Instance ID: $INSTANCE_ID"
+            echo "Instance Type: $INSTANCE_TYPE"
+            echo "Local IPv4: $LOCAL_IPV4"
+            EOF
+            
+            chmod +x /usr/local/bin/ec2-metadata.sh
+             /usr/local/bin/ec2-metadata.sh
 
             export DB_HOST=$(aws rds describe-db-instances \
             --region ${AWS::Region} \
