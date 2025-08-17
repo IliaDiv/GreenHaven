@@ -14,7 +14,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v4
         
       - name: Login to Docker Hub
@@ -34,14 +34,14 @@ jobs:
 
       - name: Running docker-compose
         env:
-          DB_ROOT: ${{ vars.DB_ROOT }}
-          DB_NAME: ${{ vars.DB_NAME }}
-          DB_USER: ${{ vars.DB_USER }}
-          DB_PASSWORD: ${{ vars.DB_PASSWORD }}
+          DB_ROOT: test
+          DB_NAME: test
+          DB_USER: test
+          DB_PASSWORD: test
           DB_HOST: localhost
         run: |
           docker compose up -d
-          sleep 10
+          sleep 5
 
       - name: Test Flask healthcheck
         run: |
@@ -59,60 +59,74 @@ jobs:
           
   deploy-to-aws:
     runs-on: ubuntu-latest
-    needs: [docker]
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.3.1
         with:
-          aws-region: eu-central-1
+          aws-region: ${{ vars.AWS_REGION }}
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub-OIDC
-          role-session-name: RealizingDocker
-          aws_default_region: eu-central-1
+          role-session-name: GreenHaven
+          aws_default_region: ${{ vars.AWS_REGION }}
 
-      - name: Create SSM Parameters (if not exist)
+      - name: Create Secrets Manager secret (if not exist)
         run: |
-          aws ssm put-parameter \
-            --name "/docker-compose/db_user" \
-            --value "${{ vars.DB_USER }}" \
-            --type "String" \
-            --overwrite || echo "Parameter already exists"
+          SECRET_VALUE=$(cat << EOF
+          {
+            "db_user": "${{ secrets.DB_USER }}",
+            "db_password": "${{ secrets.DB_PASSWORD }}",
+            "db_name": "${{ secrets.DB_NAME }}"
+          }
+          EOF
+          )
           
-          aws ssm put-parameter \
-            --name "/docker-compose/db_password" \
-            --value "${{ vars.DB_PASSWORD }}" \
-            --type "SecureString" \
-            --overwrite || echo "Parameter already exists"
+          aws secretsmanager create-secret \
+            --name "flask/database-credentials" \
+            --description "Database credentials for Docker Compose application" \
+            --secret-string "$SECRET_VALUE" \
+            --region ${{ env.AWS_REGION }} \
+            2>/dev/null || \
+          aws secretsmanager update-secret \
+            --secret-id "flask/database-credentials" \
+            --secret-string "$SECRET_VALUE" \
+            --region ${{ vars.AWS_REGION }}
           
-          aws ssm put-parameter \
-            --name "/docker-compose/db_name" \
-            --value "${{ vars.DB_NAME }}" \
-            --type "String" \
-            --overwrite || echo "Parameter already exists"
-
-          aws ssm put-parameter \
-            --name "/docker-compose/db_root" \
-            --value "${{ vars.DB_NAME }}" \
-            --type "String" \
-            --overwrite || echo "Parameter already exists"
+          echo "Secrets Manager secret created/updated successfully"
 
       - name: Validate CloudFormation template
         run: |
+          echo "Current directory: $(pwd)"
+          echo "Template file check:"
+          if [ -f "infrastructure/template.yml" ]; then
+            echo "Template file found"
+            aws cloudformation validate-template \
+              --template-body file://infrastructure/template.yml
+          else
+            echo "Template file not found at: $(pwd)/infrastructure/template.yml"
+            exit 1
+          fi
+        
+      - name: Validate CloudFormation template
+        run: |
           aws cloudformation validate-template \
-            --template-body file://infrastructure/template.yaml
+            --template-body file://infrastructure/template.yml
 
       - name: Deploy CloudFormation stack
         run: |
           aws cloudformation deploy \
-            --template-file infrastructure/template.yaml \
+            --template-file infrastructure/template.yml \
             --stack-name main \
             --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
             --parameter-overrides \
               KeyPairName=${{ secrets.KEY_PAIR_NAME }} \
               CertificateArn=${{ secrets.CERTIFICATE_ARN }} \
             --tags \
-              Project=MyApp \
+              Project=my-app-stack \
               Environment=Production \
               ManagedBy=GitHubActions
+            --debug
 
       - name: TESTING PHASE
         id: stack-outputs

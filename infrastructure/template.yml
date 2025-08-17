@@ -314,7 +314,7 @@ Resources:
     Properties:
       InstanceProfileName: SSMProfile
       Roles:
-        - docker-compose
+        - GitHub-OIDC
 
   ServerLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
@@ -328,6 +328,7 @@ Resources:
         KeyName: !Ref KeyPairName
         SecurityGroupIds:
           - !Ref ServersSG
+        DependsOn: !Ref Database
         UserData:
           Fn::Base64: !Sub |
             #!/bin/bash
