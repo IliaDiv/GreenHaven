@@ -292,7 +292,7 @@ Resources:
     Properties:
       InstanceProfileName: SSMProfile
       Roles:
-        - docker-compose
+        - GitHub-OIDC
 
   ServerLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
