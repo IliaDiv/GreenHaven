@@ -34,14 +34,14 @@ jobs:
 
       - name: Running docker-compose
         env:
-          DB_ROOT: ${{ vars.DB_ROOT }}
-          DB_NAME: ${{ vars.DB_NAME }}
-          DB_USER: ${{ vars.DB_USER }}
-          DB_PASSWORD: ${{ vars.DB_PASSWORD }}
+          DB_ROOT: test
+          DB_NAME: test
+          DB_USER: test
+          DB_PASSWORD: test
           DB_HOST: localhost
         run: |
           docker compose up -d
-          sleep 10
+          sleep 5
 
       - name: Test Flask healthcheck
         run: |
