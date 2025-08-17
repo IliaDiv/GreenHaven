@@ -306,7 +306,6 @@ Resources:
         KeyName: !Ref KeyPairName
         SecurityGroupIds:
           - !Ref ServersSG
-        DependsOn: !Ref Database
         UserData:
           Fn::Base64: !Sub |
             #!/bin/bash
