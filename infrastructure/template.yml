@@ -398,7 +398,7 @@ Resources:
       EngineVersion: '8.0'
       MasterUsername: admin
       MasterUserPassword: !Ref DBPassword
-      AllocatedStorage: 20
+      AllocatedStorage: "20"
       StorageType: gp2
       DBSubnetGroupName: !Ref DBSubnetGroup
       VPCSecurityGroups:
