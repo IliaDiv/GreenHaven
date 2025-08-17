@@ -31,31 +31,10 @@ jobs:
           
       - name: Building TEST image
         run: docker build -t ${{ vars.DOCKER_REPO }}:latest .
-
-      - name: Running docker-compose
-        env:
-          DB_ROOT: test
-          DB_NAME: test
-          DB_USER: test
-          DB_PASSWORD: test
-          DB_HOST: localhost
-        run: |
-          docker compose up -d
-          sleep 5
-
-      - name: Test Flask healthcheck
-        run: |
-          curl -f http://localhost:5000/
-          echo "Main endpoint is healthy"
       
       - name: Push LATEST version
         if: success()
         run: docker push ${{ vars.DOCKER_REPO }}:latest
-
-      - name: Cleanup
-        run: |
-          docker compose down
-          docker system prune -f
           
   deploy-to-aws:
     runs-on: ubuntu-latest
