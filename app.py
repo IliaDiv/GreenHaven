@@ -2,26 +2,24 @@ from flask import Flask, render_template, jsonify, request, redirect, url_for, s
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta, datetime
-import mariadb
+import mysql.connector
+from mysql.connector import Error as MySQLError
 import os
 import sys
 import socket
 
 app = Flask(__name__)
-# Use a fixed secret key for persistent sessions across server restarts
-# In production, use environment variable
 app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here-change-in-production')
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['PERMANENT_SESSION_LIFETIME'] = 30  # 30 
+app.config['PERMANENT_SESSION_LIFETIME'] = 30 
 
 load_dotenv()
 DB_USER = os.getenv('DB_USER')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
-DB_HOST = os.getenv('DB_HOST', 'localhost')  # Default to localhost
+DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_NAME = os.getenv('DB_NAME')
 
-# Debug: Print database configuration (remove in production)
 print(f"Database Configuration:")
 print(f"DB_HOST: {DB_HOST}")
 print(f"DB_USER: {DB_USER}")
@@ -32,7 +30,7 @@ print(f"DB_PASSWORD: {'*' * len(DB_PASSWORD) if DB_PASSWORD else 'NOT SET'}")
 def get_connection():
     """Get database connection with error handling"""
     try:
-        conn = mariadb.connect(
+        conn = mysql.connector.connect(
             host=DB_HOST,
             user=DB_USER,
             password=DB_PASSWORD,
@@ -41,8 +39,8 @@ def get_connection():
         )
         print("Database connection successful")
         return conn
-    except mariadb.Error as e:
-        print(f"Error connecting to MariaDB: {e}")
+    except MySQLError .Error as e:
+        print(f"Error connecting to MySQL: {e}")
         return None
 
 
@@ -51,7 +49,7 @@ def init_db():
     try:
         # First, connect without database to create it if needed
         print("Initializing database...")
-        conn = mariadb.connect(
+        conn = mysql.connector.connect(
             host=DB_HOST,
             user=DB_USER,
             password=DB_PASSWORD,
@@ -107,7 +105,7 @@ def init_db():
         else:
             print("Failed to connect to database for table creation")
             
-    except mariadb.Error as e:
+    except MySQLError.Error as e:
         print(f"Database initialization error: {e}")
         sys.exit(1)
 
@@ -190,7 +188,7 @@ def register():
         else:
             return redirect(url_for('login'))
             
-    except mariadb.Error as e:
+    except MySQLError.Error as e:
         print(f"Database error during registration: {e}")
         return jsonify({
             'success': False,
@@ -306,7 +304,7 @@ def login():
                 # For regular form submission, render login page with error
                 return render_template('login.html', error=error_message)
                 
-        except mariadb.Error as e:
+        except MySQLError.Error as e:
             print(f"Database error during login: {e}")
             return jsonify({
                 'success': False,

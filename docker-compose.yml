@@ -1,34 +1,14 @@
 services:
-  mariadb:
-    image: mariadb:latest
-    restart: unless-stopped
-    environment:
-      MARIADB_ROOT_PASSWORD: ${DB_ROOT}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-    ports: 
-      - "3306:3306"
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    volumes: 
-      - mariadb_data:/var/lib/mysql
-
   flask-app:
     image: irbis3/flask-backend:latest
-    depends_on:
-      mariadb:
-        condition: service_healthy
     ports:
       - "5000:5000"
     environment:
-      DB_HOST: mariadb
+      DB_HOST: ${DB_HOST}
       DB_USER: ${DB_USER}
       DB_NAME: ${DB_NAME}
       DB_PASSWORD: ${DB_PASSWORD}
+      DB_PORT: 3306
       FLASK_ENV: development
     command: python app.py
 
