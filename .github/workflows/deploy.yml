@@ -98,12 +98,12 @@ jobs:
       - name: Validate CloudFormation template
         run: |
           aws cloudformation validate-template \
-            --template-body file://infrastructure/template.yaml
+            --template-body file://infrastructure/template.yml
 
       - name: Deploy CloudFormation stack
         run: |
           aws cloudformation deploy \
-            --template-file infrastructure/template.yaml \
+            --template-file infrastructure/template.yml \
             --stack-name main \
             --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
             --parameter-overrides \
