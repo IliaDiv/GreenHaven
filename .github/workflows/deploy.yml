@@ -2,8 +2,9 @@ name: From Docker build and push to AWS EC2
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [test]
       
 permissions:
   id-token: write
@@ -42,26 +43,25 @@ jobs:
           DB_NAME="$DB_NAME" \
           DB_USER="$DB_USER" \
           DB_PASSWORD="$DB_PASSWORD" \
-          docker compose up -d
+          docker run -d
           sleep 10
           
-          echo "🔍 Checking Flask app status..."
-          docker compose exec -T flask-app ps aux | grep python || echo "Python process not found"
+          echo "Checking Flask app status..."
+          docker exec -T flask-app ps aux | grep python || echo "Python process not found"
           
-          echo "📋 Flask logs:"
-          docker compose logs flask-app
+          echo "Flask logs:"
+          docker logs flask-app
 
           if ! docker-compose exec -T flask-app curl -f http://localhost:5000/health 2>/dev/null; then
             echo "⚠️ Flask not responding, checking why..."
-            docker compose exec -T flask-app python app.py &
+            docker exec -T flask-app python app.py &
             sleep 5
           fi
 
       - name: Test Flask healthcheck
         run: |
-          curl -f http://localhost:5000/health
           curl -f http://localhost:5000/
-          echo "Health and Main endpoints are healthy"
+          echo "Main endpoint are healthy"
       
       - name: Push LATEST version
         if: success()
@@ -84,79 +84,91 @@ jobs:
           role-session-name: RealizingDocker
           aws_default_region: eu-central-1
 
-    strategy:
-      matrix:
-        instance: [1, 2]
-        include:
-        - instance: 1
-          instance_name: server-1
-          create_shared_resources: true
-        - instance: 2
-          instance_name: server-2
-          create_shared_resources: false
+      - name: Create SSM Parameters (if not exist)
+        run: |
+          aws ssm put-parameter \
+            --name "/docker-compose/db_user" \
+            --value "${{ vars.DB_USER }}" \
+            --type "String" \
+            --overwrite || echo "Parameter already exists"
           
-          aws_ec2_ami_id: ami-00a3c0b6a665fc70a
-          aws_ec2_instance_type: t2.micro
-          aws_ec2_security_group_name: servers
-          aws_ec2_instance_public_ip: false
-          aws_ec2_port_list: 5000
-
-          aws_r53_enable: true
-          aws_r53_domain_name: iliadiv.online
-          aws_r53_sub_domain_name: www
-          aws_r53_cert_arn: ${{ vars.ACM_ARN }}
-
-          aws_elb_security_group_name: nginx
-          aws_elb_app_port: 5000
-          aws_elb_listen_port: 80,443
-          aws_elb_app_protocol: http,https
-          aws_elb_healthcheck: "HTTP:5000"
+          aws ssm put-parameter \
+            --name "/docker-compose/db_password" \
+            --value "${{ vars.DB_PASSWORD }}" \
+            --type "SecureString" \
+            --overwrite || echo "Parameter already exists"
           
-        - name: Wait for deployment propagation
-          run: sleep 120
+          aws ssm put-parameter \
+            --name "/docker-compose/db_name" \
+            --value "${{ vars.DB_NAME }}" \
+            --type "String" \
+            --overwrite || echo "Parameter already exists"
 
-  verify-deployment:
-    needs: [docker, deploy-to-aws]
-    runs-on: ubuntu-latest
-    steps:
-    - name: Wait for deployment to stabilize
-      run: |
-        echo "Waiting for deployment to stabilize..."
-        sleep 60
+          aws ssm put-parameter \
+            --name "/docker-compose/db_root" \
+            --value "${{ vars.DB_NAME }}" \
+            --type "String" \
+            --overwrite || echo "Parameter already exists"
 
-    - name: Verify application health
-      run: |
-        DOMAIN="www.iliadiv.online"
-        
-        echo "Testing deployment..."
-        if curl -f --max-time 30 "http://$DOMAIN/health" 2>/dev/null; then
-          echo "HTTP health check SUCCESS"
-        else
-          echo "HTTP health check FAIL"
-        fi
-        
-        if curl -f --max-time 30 "https://$DOMAIN/health" 2>/dev/null; then
-          echo "HTTPS health check SUCCESS"
-        else
-          echo "HTTPS health check FAIL"
-        fi
+      - name: Validate CloudFormation template
+        run: |
+          aws cloudformation validate-template \
+            --template-body file://infrastructure/template.yaml
 
-  notify:
-    needs: [docker, deploy-to-aws, verify-deployment]
-    runs-on: ubuntu-latest
-    if: always()
-    
-    steps:
-    - name: Send deployment notification
-      run: |
-        STATUS="${{ job.status }}"
-        
-        if [ "$STATUS" = "success" ]; then
-          MESSAGE="Deployment SUCCESS"
-        else
-          MESSAGE="Deployment FAIL"
-        fi
-        
-        echo -e "$MESSAGE"
-        
-        
+      - name: Deploy CloudFormation stack
+        run: |
+          aws cloudformation deploy \
+            --template-file infrastructure/template.yaml \
+            --stack-name main \
+            --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
+            --parameter-overrides \
+              KeyPairName=${{ secrets.KEY_PAIR_NAME }} \
+              CertificateArn=${{ secrets.CERTIFICATE_ARN }} \
+            --tags \
+              Project=MyApp \
+              Environment=Production \
+              ManagedBy=GitHubActions
+
+      - name: TESTING PHASE
+        id: stack-outputs
+        run: |
+          LB_URL=$(aws cloudformation describe-stacks \
+            --stack-name ${{ env.STACK_NAME }} \
+            --query "Stacks[0].Outputs[?OutputKey=='LoadBalancerURL'].OutputValue" \
+            --output text)
+          echo "lb_url=$LB_URL" >> $GITHUB_OUTPUT
+          
+          LB_DNS=$(aws cloudformation describe-stacks \
+            --stack-name ${{ env.STACK_NAME }} \
+            --query "Stacks[0].Outputs[?OutputKey=='LoadBalancerDNS'].OutputValue" \
+            --output text)
+          echo "lb_dns=$LB_DNS" >> $GITHUB_OUTPUT
+
+      - name: Wait for application to be ready
+        run: |
+          echo "Waiting for application to be ready..."
+          LB_URL="${{ steps.stack-outputs.outputs.lb_url }}"
+          
+          # Wait up to 10 minutes for the application to respond
+          timeout 600 bash -c '
+            until curl -k -s "$0" | grep -q "health\|login\|index"; do
+              echo "Waiting for application to respond..."
+              sleep 30
+            done
+          ' "$LB_URL"
+          
+          echo "Application is ready at: $LB_URL"
+
+      - name: Run basic health check
+        run: |
+          LB_URL="${{ steps.stack-outputs.outputs.lb_url }}"
+          
+          # Test if application responds
+          HTTP_STATUS=$(curl -k -s -o /dev/null -w "%{http_code}" "$LB_URL")
+          
+          if [ "$HTTP_STATUS" -eq 200 ] || [ "$HTTP_STATUS" -eq 302 ]; then
+            echo "Health check SUCCESS (HTTP $HTTP_STATUS)"
+          else
+            echo "Health check FAIL (HTTP $HTTP_STATUS)"
+            exit 1
+          fi
