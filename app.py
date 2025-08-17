@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta, datetime
 import mysql.connector
-from mysql.connector import Error as MySQLError
+from mysql.connector import Error
 import os
 import sys
 import socket
@@ -39,7 +39,7 @@ def get_connection():
         )
         print("Database connection successful")
         return conn
-    except MySQLError .Error as e:
+    except Error as e:
         print(f"Error connecting to MySQL: {e}")
         return None
 
@@ -105,7 +105,7 @@ def init_db():
         else:
             print("Failed to connect to database for table creation")
             
-    except MySQLError.Error as e:
+    except Error as e:
         print(f"Database initialization error: {e}")
         sys.exit(1)
 
@@ -188,7 +188,7 @@ def register():
         else:
             return redirect(url_for('login'))
             
-    except MySQLError.Error as e:
+    except Error as e:
         print(f"Database error during registration: {e}")
         return jsonify({
             'success': False,
@@ -304,7 +304,7 @@ def login():
                 # For regular form submission, render login page with error
                 return render_template('login.html', error=error_message)
                 
-        except MySQLError.Error as e:
+        except Error as e:
             print(f"Database error during login: {e}")
             return jsonify({
                 'success': False,
