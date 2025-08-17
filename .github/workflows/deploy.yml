@@ -105,7 +105,6 @@ jobs:
               Project=my-app-stack \
               Environment=Production \
               ManagedBy=GitHubActions
-            --debug
 
       - name: TESTING PHASE
         id: stack-outputs
