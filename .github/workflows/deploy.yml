@@ -64,9 +64,9 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4.3.1
         with:
-          aws-region: eu-central-1
+          aws-region: ${{ vars.AWS_REGION }}
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub-OIDC
-          role-session-name: RealizingDocker
+          role-session-name: GreenHaven
           aws_default_region: ${{ vars.AWS_REGION }}
 
       - name: Create Secrets Manager secret (if not exist)
@@ -112,7 +112,7 @@ jobs:
               KeyPairName=${{ secrets.KEY_PAIR_NAME }} \
               CertificateArn=${{ secrets.CERTIFICATE_ARN }} \
             --tags \
-              Project=MyApp \
+              Project=my-app-stack \
               Environment=Production \
               ManagedBy=GitHubActions
 
