@@ -42,23 +42,11 @@ jobs:
         run: |
           docker compose up -d
           sleep 10
-          
-          echo "Checking Flask app status..."
-          docker exec -T flask-app ps aux | grep python || echo "Python process not found"
-          
-          echo "Flask logs:"
-          docker logs flask-app
-
-          if ! docker-compose exec -T flask-app curl -f http://localhost:5000/health 2>/dev/null; then
-            echo "⚠️ Flask not responding, checking why..."
-            docker exec -T flask-app python app.py &
-            sleep 5
-          fi
 
       - name: Test Flask healthcheck
         run: |
           curl -f http://localhost:5000/
-          echo "Main endpoint are healthy"
+          echo "Main endpoint is healthy"
       
       - name: Push LATEST version
         if: success()
