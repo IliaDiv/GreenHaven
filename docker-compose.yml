@@ -13,4 +13,4 @@ services:
     command: python app.py
 
 volumes:
-  mariadb_data:
+  mysql_data:

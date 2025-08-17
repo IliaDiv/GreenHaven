@@ -53,6 +53,92 @@ Resources:
       VpcId: !Ref VPC
       InternetGatewayId: !Ref InternetGateway
 
+  DBSubnetGroup:
+  Type: AWS::RDS::DBSubnetGroup
+  Properties:
+    DBSubnetGroupDescription: Subnet group for RDS database
+    SubnetIds:
+      - !Ref PrivateSubnet1
+      - !Ref PrivateSubnet2
+    Tags:
+      - Key: Name
+        Value: DB-SubnetGroup
+
+  DatabaseSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: DatabaseSG
+      GroupDescription: Security group for RDS database
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref ServersSG
+          Description: MySQL for servers
+      Tags:
+        - Key: Name
+          Value: DatabaseSG
+
+  Database:
+  Type: AWS::RDS::DBInstance
+  DeletionPolicy: Snapshot
+  Properties:
+    DBInstanceIdentifier: myapp-database
+    DBInstanceClass: db.t3.micro
+    Engine: mysql
+    EngineVersion: '8.0'
+    MasterUsername: admin
+    MasterUserPassword: !Ref DBPassword
+    AllocatedStorage: 20
+    StorageType: gp2
+    DBSubnetGroupName: !Ref DBSubnetGroup
+    VPCSecurityGroups:
+      - !Ref DatabaseSG
+    BackupRetentionPeriod: 7
+    MultiAZ: false
+    PubliclyAccessible: false
+    Tags:
+      - Key: Name
+        Value: MyApp-Database
+
+  LoadBalancerSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: LoadBalancerSG
+      GroupDescription: Security group for Load Balancer - HTTP, HTTPS, SSH
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: HTTP
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: HTTPS
+      Tags:
+        - Key: Name
+          Value: LoadBalancerSG
+
+  ServersSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: ServersSG
+      GroupDescription: Security group for Servers - SSH and port 5000 from LoadBalancer
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5000
+          ToPort: 5000
+          SourceSecurityGroupId: !Ref LoadBalancerSG
+          Description: Port 5000 from LoadBalancer
+      Tags:
+        - Key: Name
+          Value: ServersSG
+
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -116,17 +202,6 @@ Resources:
       Tags:
         - Key: Name
           Value: Public Route Table 2
-
-  DBSubnetGroup:
-    Type: AWS::RDS::DBSubnetGroup
-    Properties:
-      DBSubnetGroupDescription: Subnet group for RDS database
-      SubnetIds:
-        - !Ref PrivateSubnet1
-        - !Ref PrivateSubnet2
-      Tags:
-        - Key: Name
-          Value: DB-SubnetGroup
 
   PublicRoute1:
     Type: AWS::EC2::Route
@@ -234,59 +309,6 @@ Resources:
         - Key: Name
           Value: NATGateway2
 
-  LoadBalancerSG:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: LoadBalancerSG
-      GroupDescription: Security group for Load Balancer - HTTP, HTTPS, SSH
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
-          Description: HTTP
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          CidrIp: 0.0.0.0/0
-          Description: HTTPS
-      Tags:
-        - Key: Name
-          Value: LoadBalancerSG
-
-  ServersSG:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: ServersSG
-      GroupDescription: Security group for Servers - SSH and port 5000 from LoadBalancer
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 5000
-          ToPort: 5000
-          SourceSecurityGroupId: !Ref LoadBalancerSG
-          Description: Port 5000 from LoadBalancer
-      Tags:
-        - Key: Name
-          Value: ServersSG
-    
-  DatabaseSG:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: DatabaseSG
-      GroupDescription: Security group for RDS database
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 3306
-          ToPort: 3306
-          SourceSecurityGroupId: !Ref ServersSG
-          Description: MySQL for servers
-      Tags:
-        - Key: Name
-          Value: DatabaseSG
-
   SSMProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
@@ -314,7 +336,7 @@ Resources:
             systemctl enable --now docker
             docker pull irbis3/flask-backend:latest
             wget -O /home/ec2-user/docker-compose.yml https://raw.githubusercontent.com/IliaDiv/GreenHaven/refs/heads/main/docker-compose.yml
-            sleep 90
+            sleep 60
 
             mkdir -p ~/.docker/cli-plugins/
             curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
@@ -322,14 +344,9 @@ Resources:
 
             export DB_HOST=$(aws rds describe-db-instances \
             --region ${AWS::Region} \
-            --db-instance-identifier myapp-database \
+            --db-instance-identifier MyApp-Database \
             --query "DBInstances[0].Endpoint.Address" \
             --output text)
-
-            export DB_USER=$(aws ssm get-parameter --name "/docker-compose/db_user" --with-decryption --query "Parameter.Value" --output text)
-            export DB_PASSWORD=$(aws ssm get-parameter --name "/docker-compose/db_password" --with-decryption --query "Parameter.Value" --output text)
-            export DB_NAME=$(aws ssm get-parameter --name "/docker-compose/db_name" --with-decryption --query "Parameter.Value" --output text)
-            export DB_ROOT=$(aws ssm get-parameter --name "/docker-compose/db_root" --with-decryption --query "Parameter.Value" --output text)
             
             sleep 1
             docker compose -f /home/ec2-user/docker-compose.yml up -d
@@ -381,29 +398,6 @@ Resources:
       Tags:
         - Key: Name
           Value: TheLoadBalancer
-
-  Database:
-    Type: AWS::RDS::DBInstance
-    DeletionPolicy: Snapshot
-    Properties:
-      DBInstanceIdentifier: myapp-database
-      DBInstanceClass: db.t3.micro
-      Engine: mysql
-      EngineVersion: '8.0'
-      MasterUsername: admin
-      MasterUserPassword: !Ref DBPassword
-      AllocatedStorage: 20
-      StorageType: gp2
-      DBSubnetGroupName: !Ref DBSubnetGroup
-      VPCSecurityGroups:
-        - !Ref DatabaseSG
-      BackupRetentionPeriod: 7
-      MultiAZ: false
-      PubliclyAccessible: false
-      DeletionProtection: true
-      Tags:
-        - Key: Name
-          Value: MyApp-Database
 
   ServersTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup

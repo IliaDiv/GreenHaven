@@ -7,6 +7,9 @@ from mysql.connector import Error
 import os
 import sys
 import socket
+import boto3
+import json
+from botocore.exceptions import ClientError
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here-change-in-production')
@@ -19,13 +22,6 @@ DB_USER = os.getenv('DB_USER')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_NAME = os.getenv('DB_NAME')
-
-print(f"Database Configuration:")
-print(f"DB_HOST: {DB_HOST}")
-print(f"DB_USER: {DB_USER}")
-print(f"DB_NAME: {DB_NAME}")
-print(f"DB_PASSWORD: {'*' * len(DB_PASSWORD) if DB_PASSWORD else 'NOT SET'}")
-
 
 def get_connection():
     """Get database connection with error handling"""
@@ -46,6 +42,8 @@ def get_connection():
 
 def init_db():
     """Initialize database and create tables"""
+    if DB_HOST == 'localhost':
+        return
     try:
         # First, connect without database to create it if needed
         print("Initializing database...")
@@ -108,6 +106,37 @@ def init_db():
     except Error as e:
         print(f"Database initialization error: {e}")
         sys.exit(1)
+
+def get_database_credentials():
+    secret_name = "flask/database-credentials"
+    region_name = "eu-central-1"
+    
+    # Create a Secrets Manager client
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+    
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        raise e
+    
+    # Parse the secret JSON string
+    secret_string = get_secret_value_response['SecretString']
+    secret_dict = json.loads(secret_string)
+    
+    # Extract database credentials
+    db_credentials = {
+        'db_user': secret_dict['db_user'],
+        'db_password': secret_dict['db_password'],
+        'db_name': secret_dict['db_name']
+    }
+    
+    return db_credentials
 
 
 @app.route("/")
@@ -449,5 +478,13 @@ def get_items():
 
 if __name__ == "__main__":
     print("\n=== Starting Flask Application ===")
+    credentials = get_database_credentials()
+        
+    db_user = credentials['db_user']
+    db_password = credentials['db_password']
+    db_name = credentials['db_name']
+    
+    print(f"Database User: {db_user}")
+    print(f"Database Name: {db_name}")
     init_db()
     app.run(debug=True, host="0.0.0.0", port=5000)
