@@ -46,6 +46,8 @@ def get_connection():
 
 def init_db():
     """Initialize database and create tables"""
+    if DB_HOST == 'localhost':
+        return
     try:
         # First, connect without database to create it if needed
         print("Initializing database...")
