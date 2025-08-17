@@ -67,34 +67,36 @@ jobs:
           aws-region: eu-central-1
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub-OIDC
           role-session-name: RealizingDocker
-          aws_default_region: eu-central-1
+          aws_default_region: ${{ vars.AWS_REGION }}
 
-      - name: Create SSM Parameters (if not exist)
+      - name: Create Secrets Manager secret (if not exist)
         run: |
-          aws ssm put-parameter \
-            --name "/docker-compose/db_user" \
-            --value "${{ vars.DB_USER }}" \
-            --type "String" \
-            --overwrite || echo "Parameter already exists"
+          SECRET_VALUE=$(cat << EOF
+          {
+            "db_user": "${{ secrets.DB_USER }}",
+            "db_password": "${{ secrets.DB_PASSWORD }}",
+            "db_name": "${{ secrets.DB_NAME }}"
+          }
+          EOF
+          )
           
-          aws ssm put-parameter \
-            --name "/docker-compose/db_password" \
-            --value "${{ vars.DB_PASSWORD }}" \
-            --type "SecureString" \
-            --overwrite || echo "Parameter already exists"
+          aws secretsmanager create-secret \
+            --name "flask/database-credentials" \
+            --description "Database credentials for Docker Compose application" \
+            --secret-string "$SECRET_VALUE" \
+            --region ${{ env.AWS_REGION }} \
+            2>/dev/null || \
+          aws secretsmanager update-secret \
+            --secret-id "flask/database-credentials" \
+            --secret-string "$SECRET_VALUE" \
+            --region ${{ vars.AWS_REGION }}
           
-          aws ssm put-parameter \
-            --name "/docker-compose/db_name" \
-            --value "${{ vars.DB_NAME }}" \
-            --type "String" \
-            --overwrite || echo "Parameter already exists"
+          echo "Secrets Manager secret created/updated successfully"
 
-          aws ssm put-parameter \
-            --name "/docker-compose/db_root" \
-            --value "${{ vars.DB_NAME }}" \
-            --type "String" \
-            --overwrite || echo "Parameter already exists"
-
+      - name: List repo files
+        run: |
+          ls -R
+        
       - name: Validate CloudFormation template
         run: |
           aws cloudformation validate-template \
