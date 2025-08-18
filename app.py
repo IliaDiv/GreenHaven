@@ -11,17 +11,52 @@ import boto3
 import json
 from botocore.exceptions import ClientError
 
+def get_database_credentials():
+    secret_name = "flask/database-credentials"
+    region_name = "eu-central-1"
+    
+    # Create a Secrets Manager client
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+    
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        raise e
+    
+    # Parse the secret JSON string
+    secret_string = get_secret_value_response['SecretString']
+    secret_dict = json.loads(secret_string)
+    
+    # Extract database credentials
+    db_credentials = {
+        'db_user': secret_dict['db_user'],
+        'db_password': secret_dict['db_password'],
+        'db_name': secret_dict['db_name'],
+        'cookie': secret_dict['cookie']
+    }
+    
+    return db_credentials
+
+credentials = get_database_credentials()
+
+DB_USER = credentials['db_user']
+DB_PASSWORD = credentials['db_password']
+DB_NAME = credentials['db_name']
+COOKIE = credentials['cookie']
+
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here-change-in-production')
+app.secret_key = os.getenv('SECRET_KEY', f'{COOKIE}')
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['PERMANENT_SESSION_LIFETIME'] = 30 
 
-load_dotenv()
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_HOST = os.getenv('DB_HOST', 'localhost')
-DB_NAME = os.getenv('DB_NAME')
 
 def get_connection():
     """Get database connection with error handling"""
@@ -106,37 +141,6 @@ def init_db():
     except Error as e:
         print(f"Database initialization error: {e}")
         sys.exit(1)
-
-def get_database_credentials():
-    secret_name = "flask/database-credentials"
-    region_name = "eu-central-1"
-    
-    # Create a Secrets Manager client
-    session = boto3.session.Session()
-    client = session.client(
-        service_name='secretsmanager',
-        region_name=region_name
-    )
-    
-    try:
-        get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name
-        )
-    except ClientError as e:
-        raise e
-    
-    # Parse the secret JSON string
-    secret_string = get_secret_value_response['SecretString']
-    secret_dict = json.loads(secret_string)
-    
-    # Extract database credentials
-    db_credentials = {
-        'db_user': secret_dict['db_user'],
-        'db_password': secret_dict['db_password'],
-        'db_name': secret_dict['db_name']
-    }
-    
-    return db_credentials
 
 
 @app.route("/")
@@ -478,13 +482,7 @@ def get_items():
 
 if __name__ == "__main__":
     print("\n=== Starting Flask Application ===")
-    credentials = get_database_credentials()
-        
-    db_user = credentials['db_user']
-    db_password = credentials['db_password']
-    db_name = credentials['db_name']
-    
-    print(f"Database User: {db_user}")
-    print(f"Database Name: {db_name}")
+    print(f"Database User: {DB_USER}")
+    print(f"Database Name: {DB_NAME}")
     init_db()
     app.run(debug=True, host="0.0.0.0", port=5000)
