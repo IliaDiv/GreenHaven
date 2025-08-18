@@ -50,30 +50,6 @@ jobs:
           role-session-name: GreenHaven
           aws_default_region: ${{ vars.AWS_REGION }}
 
-      - name: Create Secrets Manager secret (if not exist)
-        run: |
-          SECRET_VALUE=$(cat << EOF
-          {
-            "db_user": "${{ secrets.DB_USER }}",
-            "db_password": "${{ secrets.DB_PASSWORD }}",
-            "db_name": "${{ secrets.DB_NAME }}"
-          }
-          EOF
-          )
-          
-          aws secretsmanager create-secret \
-            --name "flask/database-credentials" \
-            --description "Database credentials for Docker Compose application" \
-            --secret-string "$SECRET_VALUE" \
-            --region ${{ env.AWS_REGION }} \
-            2>/dev/null || \
-          aws secretsmanager update-secret \
-            --secret-id "flask/database-credentials" \
-            --secret-string "$SECRET_VALUE" \
-            --region ${{ vars.AWS_REGION }}
-          
-          echo "Secrets Manager secret created/updated successfully"
-
       - name: Validate CloudFormation template
         run: |
           echo "Current directory: $(pwd)"

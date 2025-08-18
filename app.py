@@ -11,47 +11,16 @@ import boto3
 import json
 from botocore.exceptions import ClientError
 
-def get_database_credentials():
-    secret_name = "flask/database-credentials"
-    region_name = "eu-central-1"
-    
-    # Create a Secrets Manager client
-    session = boto3.session.Session()
-    client = session.client(
-        service_name='secretsmanager',
-        region_name=region_name
+def get_rds_endpoint_boto3():
+    """Get RDS endpoint using boto3"""
+    rds_client = boto3.client('rds')
+    response = rds_client.describe_db_instances(
+        DBInstanceIdentifier='myapp-database'
     )
-    
-    try:
-        get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name
-        )
-    except ClientError as e:
-        raise e
-    
-    # Parse the secret JSON string
-    secret_string = get_secret_value_response['SecretString']
-    secret_dict = json.loads(secret_string)
-    
-    # Extract database credentials
-    db_credentials = {
-        'db_user': secret_dict['db_user'],
-        'db_password': secret_dict['db_password'],
-        'db_name': secret_dict['db_name'],
-        'cookie': secret_dict['cookie']
-    }
-    
-    return db_credentials
-
-credentials = get_database_credentials()
-
-DB_USER = credentials['db_user']
-DB_PASSWORD = credentials['db_password']
-DB_NAME = credentials['db_name']
-COOKIE = credentials['cookie']
+    return response['DBInstances'][0]['Endpoint']['Address']
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', f'{COOKIE}')
+app.secret_key = os.getenv('SECRET_KEY', '1231212412')
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['PERMANENT_SESSION_LIFETIME'] = 30 
@@ -61,15 +30,25 @@ DB_HOST = os.getenv('DB_HOST', 'localhost')
 def get_connection():
     """Get database connection with error handling"""
     try:
-        conn = mysql.connector.connect(
-            host=DB_HOST,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            database=DB_NAME,
-            port=3306
+        rds_client = boto3.client('rds')
+        db_hostname = get_rds_endpoint_boto3()
+        token = rds_client.generate_db_auth_token(
+            DBHostname=db_hostname,  # ✅ Works perfectly
+            Port=3306,
+            DBUsername='iam-user'
         )
+        connection = pymysql.connect(
+        host=db_hostname,
+        user='iam-user',
+        password=token,
+        database='users',
+        port=3306,
+        ssl={'ssl_ca': '/opt/amazon-cert.pem'},
+        connect_timeout=10
+        )
+        
         print("Database connection successful")
-        return conn
+        return connection
     except Error as e:
         print(f"Error connecting to MySQL: {e}")
         return None
