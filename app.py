@@ -10,10 +10,11 @@ import socket
 import boto3
 import json
 from botocore.exceptions import ClientError
+import pymysql
 
 def get_rds_endpoint_boto3():
     """Get RDS endpoint using boto3"""
-    rds_client = boto3.client('rds')
+    rds_client = boto3.client('rds', 'eu-central-1')
     response = rds_client.describe_db_instances(
         DBInstanceIdentifier='myapp-database'
     )
@@ -27,100 +28,72 @@ app.config['PERMANENT_SESSION_LIFETIME'] = 30
 
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 
-def get_connection():
-    """Get database connection with error handling"""
+def setup_database():
+    """Create database and tables"""
     try:
-        rds_client = boto3.client('rds')
+        print("Initializing Database...")
         db_hostname = get_rds_endpoint_boto3()
-        token = rds_client.generate_db_auth_token(
-            DBHostname=db_hostname,  # ✅ Works perfectly
-            Port=3306,
-            DBUsername='iam-user'
-        )
-        connection = pymysql.connect(
-        host=db_hostname,
-        user='iam-user',
-        password=token,
-        database='users',
-        port=3306,
-        ssl={'ssl_ca': '/opt/amazon-cert.pem'},
-        connect_timeout=10
-        )
         
-        print("Database connection successful")
-        return connection
-    except Error as e:
-        print(f"Error connecting to MySQL: {e}")
-        return None
-
-
-def init_db():
-    """Initialize database and create tables"""
-    if DB_HOST == 'localhost':
-        return
-    try:
-        # First, connect without database to create it if needed
-        print("Initializing database...")
-        conn = mysql.connector.connect(
-            host=DB_HOST,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            port=3306
+        # Step 1: Connect without specifying a database
+        conn = pymysql.connect(
+            host=db_hostname,
+            user='exampleuser',
+            password='12341234',
+            port=3306,
+            ssl={'ssl_ca': '/opt/amazon-cert.pem'},
+            connect_timeout=10
         )
-        print("Connected...")
         cur = conn.cursor()
-        
-        # Create database if it doesn't exist
-        cur.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
-        print(f"Database {DB_NAME} created or already exists")
-        
+        cur.execute("CREATE DATABASE IF NOT EXISTS users")
         conn.commit()
         conn.close()
+        print("Database 'users' created or already exists")
         
-        # Now connect to the database and create tables
-        conn = get_connection()
-        if conn:
-            cur = conn.cursor()
-            
-            # Drop and recreate table for testing (remove this in production)
-            # cur.execute("DROP TABLE IF EXISTS users")
-            
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS users (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    email VARCHAR(120) UNIQUE NOT NULL,
-                    first_name VARCHAR(80) NOT NULL,
-                    last_name VARCHAR(80) NOT NULL,
-                    password VARCHAR(255) NOT NULL,
-                    newsletter BOOLEAN DEFAULT FALSE
-                )
-            """)
-            print("Users table created or already exists")
-            
-            # Check if table is empty and add a test user
-            cur.execute("SELECT COUNT(*) FROM users")
-            count = cur.fetchone()[0]
-            print(f"Current user count: {count}")
-            
-            if count == 0:
-                # Add a test user for debugging
-                test_password = generate_password_hash("password123")
-                cur.execute("""
-                    INSERT INTO users (email, first_name, last_name, password, newsletter)
-                    VALUES (%s, %s, %s, %s, %s)
-                """, ("test@example.com", "Test", "User", test_password, False))
-                print("Test user created: test@example.com / password123")
-            
-            conn.commit()
-            conn.close()
-            print("Database initialization complete")
-        else:
-            print("Failed to connect to database for table creation")
-            
-    except Error as e:
-        print(f"Database initialization error: {e}")
-        sys.exit(1)
+        # Step 2: Connect to the newly created database
+        conn = pymysql.connect(
+            host=db_hostname,
+            user='exampleuser',
+            password='12341234',
+            database='users',
+            port=3306,
+            ssl={'ssl_ca': '/opt/amazon-cert.pem'},
+            connect_timeout=10
+        )
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                email VARCHAR(120) UNIQUE NOT NULL,
+                first_name VARCHAR(80) NOT NULL,
+                last_name VARCHAR(80) NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                newsletter BOOLEAN DEFAULT FALSE
+            )
+        """)
+        conn.commit()
+        conn.close()
+        print("Tables created successfully")
+        
+    except pymysql.MySQLError as e:
+        print(f"Database setup error: {e}")
 
+def get_connection():
+    """Get database connection for queries"""
+    try:
+        db_hostname = get_rds_endpoint_boto3()
+        conn = pymysql.connect(
+            host=db_hostname,
+            user='exampleuser',
+            password='12341234',
+            database='users',
+            port=3306,
+            ssl={'ssl_ca': '/opt/amazon-cert.pem'},
+            connect_timeout=10
+        )
+        return conn
+    except pymysql.MySQLError as e:
+        print(f"Error connecting to MySQL: {e}")
+        return None
 
 @app.route("/")
 def index():
@@ -461,7 +434,5 @@ def get_items():
 
 if __name__ == "__main__":
     print("\n=== Starting Flask Application ===")
-    print(f"Database User: {DB_USER}")
-    print(f"Database Name: {DB_NAME}")
-    init_db()
+    setup_database()
     app.run(debug=True, host="0.0.0.0", port=5000)

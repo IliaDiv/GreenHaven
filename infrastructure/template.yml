@@ -78,6 +78,7 @@ Resources:
     DeletionPolicy: Snapshot
     Properties:
       DBInstanceIdentifier: myapp-database
+      DBName: users
       DBInstanceClass: db.t3.micro
       Engine: mysql
       EngineVersion: '8.0'
@@ -364,13 +365,14 @@ Resources:
             chmod +x /usr/local/bin/ec2-metadata.sh
              /usr/local/bin/ec2-metadata.sh
 
-            wget https://truststore.pki.rds.amazonaws.com/eu-central-1/eu-central-1-bundle.pem
+            wget -O /opt/amazon-cert.pem https://truststore.pki.rds.amazonaws.com/eu-central-1/eu-central-1-bundle.pem
             
             sleep 1
             docker compose -f /home/ec2-user/docker-compose.yml up -d
 
   AutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
+    DependsOn: !Ref Database
     Properties:
       AutoScalingGroupName: ASG-GHA
       LaunchTemplate:
