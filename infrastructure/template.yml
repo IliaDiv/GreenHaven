@@ -75,7 +75,7 @@ Resources:
 
   Database:
     Type: AWS::RDS::DBInstance
-    DeletionPolicy: Snapshot
+    DeletionPolicy: Delete
     Properties:
       DBInstanceIdentifier: myapp-database
       DBName: users
@@ -89,6 +89,7 @@ Resources:
       AllocatedStorage: 20
       StorageType: gp2
       DBSubnetGroupName: !Ref DBSubnetGroup
+      DeleteAutomatedBackups: true
       VPCSecurityGroups:
         - !Ref DatabaseSG
       MultiAZ: false
@@ -372,7 +373,7 @@ Resources:
 
   AutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
-    DependsOn: !Ref Database
+    DependsOn: Database
     Properties:
       AutoScalingGroupName: ASG-GHA
       LaunchTemplate:
