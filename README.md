@@ -71,8 +71,9 @@ This creates a security-in-depth approach where each tier can only communicate w
 3) Move the images and the video to S3 and get it inside the flask app using an S3 endpoint (+ IAM permissions)
 4) Replace other static parameters to dynamic parameters (F.E. the region, switch it to us-east-1 by default)
 5) Change the app.py to continue checking for a DB endpoint in case of failure
-6) Add more tests (check app.py is working after building the image phase?)
-7) Add logs for better troubleshooting
-8) Update to a modern frontend (React?)
-9) Move to ECS, ECR and EKS (move to one or more of them)
-10) Improve the website in general, adding features
+6) Make IAM roles instead of pre-configuring, based on the resources ARN created in the template.yml
+7) Add more tests (check app.py is working after building the image phase?)
+8) Add logs for better troubleshooting
+9) Update to a modern frontend (React?)
+10) Move to ECS, ECR and EKS (move to one or more of them)
+11) Improve the website in general, adding features
