@@ -26,16 +26,11 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-          
-      - name: Building TEST image
-        run: docker build -t ${{ vars.DOCKER_REPO }}:latest .
-      
-      - name: Push LATEST version
-        if: success()
-        run: docker push ${{ vars.DOCKER_REPO }}:latest
-          
+      - uses: docker/setup-buildx-action@v3
+      - run: |
+          docker build -t ${{ vars.DOCKER_REPO }}:latest .
+          docker push ${{ vars.DOCKER_REPO }}:latest
+
   deploy-to-aws:
     runs-on: ubuntu-latest
     steps:
@@ -49,30 +44,6 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHub-OIDC
           role-session-name: GreenHaven
           aws_default_region: ${{ vars.AWS_REGION }}
-
-      - name: Create Secrets Manager secret (if not exist)
-        run: |
-          SECRET_VALUE=$(cat << EOF
-          {
-            "db_user": "${{ secrets.DB_USER }}",
-            "db_password": "${{ secrets.DB_PASSWORD }}",
-            "db_name": "${{ secrets.DB_NAME }}"
-          }
-          EOF
-          )
-          
-          aws secretsmanager create-secret \
-            --name "flask/database-credentials" \
-            --description "Database credentials for Docker Compose application" \
-            --secret-string "$SECRET_VALUE" \
-            --region ${{ env.AWS_REGION }} \
-            2>/dev/null || \
-          aws secretsmanager update-secret \
-            --secret-id "flask/database-credentials" \
-            --secret-string "$SECRET_VALUE" \
-            --region ${{ vars.AWS_REGION }}
-          
-          echo "Secrets Manager secret created/updated successfully"
 
       - name: Validate CloudFormation template
         run: |
@@ -121,31 +92,14 @@ jobs:
             --output text)
           echo "lb_dns=$LB_DNS" >> $GITHUB_OUTPUT
 
-      - name: Wait for application to be ready
+      - name: Run health check
         run: |
-          echo "Waiting for application to be ready..."
-          LB_URL="${{ steps.stack-outputs.outputs.lb_url }}"
-          
-          # Wait up to 10 minutes for the application to respond
-          timeout 600 bash -c '
-            until curl -k -s "$0" | grep -q "health\|login\|index"; do
-              echo "Waiting for application to respond..."
+          HEALTH_URL="https://www.iliadiv.online/health"
+
+          timeout 400 bash -c '
+            until HTTP_STATUS=$(curl -k -s -o /dev/null -w "%{http_code}" "$0") && [ "$HTTP_STATUS" -eq 200 ]; do
+              echo "Waiting for application to respond... (HTTP $HTTP_STATUS)"
               sleep 30
             done
-          ' "$LB_URL"
-          
-          echo "Application is ready at: $LB_URL"
-
-      - name: Run basic health check
-        run: |
-          LB_URL="${{ steps.stack-outputs.outputs.lb_url }}"
-          
-          # Test if application responds
-          HTTP_STATUS=$(curl -k -s -o /dev/null -w "%{http_code}" "$LB_URL")
-          
-          if [ "$HTTP_STATUS" -eq 200 ] || [ "$HTTP_STATUS" -eq 302 ]; then
             echo "Health check SUCCESS (HTTP $HTTP_STATUS)"
-          else
-            echo "Health check FAIL (HTTP $HTTP_STATUS)"
-            exit 1
-          fi
+          ' "$HEALTH_URL"

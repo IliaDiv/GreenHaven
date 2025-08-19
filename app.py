@@ -10,134 +10,90 @@ import socket
 import boto3
 import json
 from botocore.exceptions import ClientError
+import pymysql
+
+def get_rds_endpoint_boto3():
+    """Get RDS endpoint using boto3"""
+    rds_client = boto3.client('rds', 'eu-central-1')
+    response = rds_client.describe_db_instances(
+        DBInstanceIdentifier='myapp-database'
+    )
+    return response['DBInstances'][0]['Endpoint']['Address']
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here-change-in-production')
+app.secret_key = os.getenv('SECRET_KEY', '1231212412')
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['PERMANENT_SESSION_LIFETIME'] = 30 
 
-load_dotenv()
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_HOST = os.getenv('DB_HOST', 'localhost')
-DB_NAME = os.getenv('DB_NAME')
 
-def get_connection():
-    """Get database connection with error handling"""
+def setup_database():
+    """Create database and tables"""
     try:
-        conn = mysql.connector.connect(
-            host=DB_HOST,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            database=DB_NAME,
-            port=3306
+        print("Initializing Database...")
+        db_hostname = get_rds_endpoint_boto3()
+        
+        # Step 1: Connect without specifying a database
+        conn = pymysql.connect(
+            host=db_hostname,
+            user='exampleuser',
+            password='12341234',
+            port=3306,
+            ssl={'ssl_ca': '/opt/amazon-cert.pem'},
+            connect_timeout=10
         )
-        print("Database connection successful")
-        return conn
-    except Error as e:
-        print(f"Error connecting to MySQL: {e}")
-        return None
-
-
-def init_db():
-    """Initialize database and create tables"""
-    if DB_HOST == 'localhost':
-        return
-    try:
-        # First, connect without database to create it if needed
-        print("Initializing database...")
-        conn = mysql.connector.connect(
-            host=DB_HOST,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            port=3306
-        )
-        print("Connected...")
         cur = conn.cursor()
-        
-        # Create database if it doesn't exist
-        cur.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
-        print(f"Database {DB_NAME} created or already exists")
-        
+        cur.execute("CREATE DATABASE IF NOT EXISTS users")
         conn.commit()
         conn.close()
+        print("Database 'users' created or already exists")
         
-        # Now connect to the database and create tables
-        conn = get_connection()
-        if conn:
-            cur = conn.cursor()
-            
-            # Drop and recreate table for testing (remove this in production)
-            # cur.execute("DROP TABLE IF EXISTS users")
-            
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS users (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    email VARCHAR(120) UNIQUE NOT NULL,
-                    first_name VARCHAR(80) NOT NULL,
-                    last_name VARCHAR(80) NOT NULL,
-                    password VARCHAR(255) NOT NULL,
-                    newsletter BOOLEAN DEFAULT FALSE
-                )
-            """)
-            print("Users table created or already exists")
-            
-            # Check if table is empty and add a test user
-            cur.execute("SELECT COUNT(*) FROM users")
-            count = cur.fetchone()[0]
-            print(f"Current user count: {count}")
-            
-            if count == 0:
-                # Add a test user for debugging
-                test_password = generate_password_hash("password123")
-                cur.execute("""
-                    INSERT INTO users (email, first_name, last_name, password, newsletter)
-                    VALUES (%s, %s, %s, %s, %s)
-                """, ("test@example.com", "Test", "User", test_password, False))
-                print("Test user created: test@example.com / password123")
-            
-            conn.commit()
-            conn.close()
-            print("Database initialization complete")
-        else:
-            print("Failed to connect to database for table creation")
-            
-    except Error as e:
-        print(f"Database initialization error: {e}")
-        sys.exit(1)
-
-def get_database_credentials():
-    secret_name = "flask/database-credentials"
-    region_name = "eu-central-1"
-    
-    # Create a Secrets Manager client
-    session = boto3.session.Session()
-    client = session.client(
-        service_name='secretsmanager',
-        region_name=region_name
-    )
-    
-    try:
-        get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name
+        # Step 2: Connect to the newly created database
+        conn = pymysql.connect(
+            host=db_hostname,
+            user='exampleuser',
+            password='12341234',
+            database='users',
+            port=3306,
+            ssl={'ssl_ca': '/opt/amazon-cert.pem'},
+            connect_timeout=10
         )
-    except ClientError as e:
-        raise e
-    
-    # Parse the secret JSON string
-    secret_string = get_secret_value_response['SecretString']
-    secret_dict = json.loads(secret_string)
-    
-    # Extract database credentials
-    db_credentials = {
-        'db_user': secret_dict['db_user'],
-        'db_password': secret_dict['db_password'],
-        'db_name': secret_dict['db_name']
-    }
-    
-    return db_credentials
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                email VARCHAR(120) UNIQUE NOT NULL,
+                first_name VARCHAR(80) NOT NULL,
+                last_name VARCHAR(80) NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                newsletter BOOLEAN DEFAULT FALSE
+            )
+        """)
+        conn.commit()
+        conn.close()
+        print("Tables created successfully")
+        
+    except pymysql.MySQLError as e:
+        print(f"Database setup error: {e}")
 
+def get_connection():
+    """Get database connection for queries"""
+    try:
+        db_hostname = get_rds_endpoint_boto3()
+        conn = pymysql.connect(
+            host=db_hostname,
+            user='exampleuser',
+            password='12341234',
+            database='users',
+            port=3306,
+            ssl={'ssl_ca': '/opt/amazon-cert.pem'},
+            connect_timeout=10
+        )
+        return conn
+    except pymysql.MySQLError as e:
+        print(f"Error connecting to MySQL: {e}")
+        return None
 
 @app.route("/")
 def index():
@@ -478,13 +434,5 @@ def get_items():
 
 if __name__ == "__main__":
     print("\n=== Starting Flask Application ===")
-    credentials = get_database_credentials()
-        
-    db_user = credentials['db_user']
-    db_password = credentials['db_password']
-    db_name = credentials['db_name']
-    
-    print(f"Database User: {db_user}")
-    print(f"Database Name: {db_name}")
-    init_db()
+    setup_database()
     app.run(debug=True, host="0.0.0.0", port=5000)

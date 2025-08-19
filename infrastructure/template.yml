@@ -10,7 +10,7 @@ Parameters:
   CertificateArn:
     Type: String
     Description: ARN of the ACM SSL certificate in eu-central-1
-    Default: arn:aws:acm:eu-central-1:337909746080:certificate/ac61d3f8-a700-4280-bd34-9841927c33d3
+    Default: ${{ secrets.CERTIFICATE_ARN }}
 
   LatestAmiId:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
@@ -21,13 +21,6 @@ Parameters:
     Type: String
     Default: iliadiv.online
     Description: Domain name for the application
-
-  DBPassword:
-    Type: String
-    NoEcho: true
-    Description: Database root password
-    MinLength: 8
-    Default: 12341234
 
 Resources:
   VPC:
@@ -82,20 +75,23 @@ Resources:
 
   Database:
     Type: AWS::RDS::DBInstance
-    DeletionPolicy: Snapshot
+    DeletionPolicy: Delete
     Properties:
       DBInstanceIdentifier: myapp-database
+      DBName: users
       DBInstanceClass: db.t3.micro
       Engine: mysql
       EngineVersion: '8.0'
-      MasterUsername: admin
-      MasterUserPassword: !Ref DBPassword
+      MasterUsername: '{{resolve:secretsmanager:flask/database-credentials:SecretString:db_user}}'
+      MasterUserPassword: '{{resolve:secretsmanager:flask/database-credentials:SecretString:db_password}}'
+      EnableIAMDatabaseAuthentication: true
+      CACertificateIdentifier: "rds-ca-rsa2048-g1"
       AllocatedStorage: 20
       StorageType: gp2
       DBSubnetGroupName: !Ref DBSubnetGroup
+      DeleteAutomatedBackups: true
       VPCSecurityGroups:
         - !Ref DatabaseSG
-      BackupRetentionPeriod: 7
       MultiAZ: false
       PubliclyAccessible: false
       Tags:
@@ -314,7 +310,7 @@ Resources:
     Properties:
       InstanceProfileName: SSMProfile
       Roles:
-        - GitHub-OIDC
+        - Flask-EC2-Profile
 
   ServerLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
@@ -335,12 +331,8 @@ Resources:
             usermod -aG docker ec2-user
             systemctl enable --now docker
             docker pull irbis3/flask-backend:latest
-            wget -O /home/ec2-user/docker-compose.yml https://raw.githubusercontent.com/IliaDiv/GreenHaven/refs/heads/main/docker-compose.yml
             sleep 60
 
-            mkdir -p ~/.docker/cli-plugins/
-            curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
-            chmod +x ~/.docker/cli-plugins/docker-compose
             cat << 'EOF' > /usr/local/bin/ec2-metadata.sh
             #!/bin/bash
             
@@ -364,30 +356,20 @@ Resources:
               curl -s -H "X-aws-ec2-metadata-token: $TOKEN" \
                    "http://169.254.169.254/latest/meta-data/$path"
             }
-            
-            INSTANCE_ID=$(get_metadata "instance-id")
-            INSTANCE_TYPE=$(get_metadata "instance-type")
-            LOCAL_IPV4=$(get_metadata "local-ipv4")
-            
-            echo "Instance ID: $INSTANCE_ID"
-            echo "Instance Type: $INSTANCE_TYPE"
-            echo "Local IPv4: $LOCAL_IPV4"
+
             EOF
             
             chmod +x /usr/local/bin/ec2-metadata.sh
              /usr/local/bin/ec2-metadata.sh
 
-            export DB_HOST=$(aws rds describe-db-instances \
-            --region ${AWS::Region} \
-            --db-instance-identifier MyApp-Database \
-            --query "DBInstances[0].Endpoint.Address" \
-            --output text)
+            wget -O /opt/amazon-cert.pem https://truststore.pki.rds.amazonaws.com/eu-central-1/eu-central-1-bundle.pem
             
             sleep 1
-            docker compose -f /home/ec2-user/docker-compose.yml up -d
+            docker run -p 5000:5000 --name flask irbis3/flask-backend:latest
 
   AutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
+    DependsOn: Database
     Properties:
       AutoScalingGroupName: ASG-GHA
       LaunchTemplate:
