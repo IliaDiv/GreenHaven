@@ -70,7 +70,9 @@ This creates a security-in-depth approach where each tier can only communicate w
 2) Get DB credentials from Secrets Manager (inside the flask app?) to write and get information from the database instead of using hard-coded credentials (+ IAM permissions)
 3) Move the images and the video to S3 and get it inside the flask app using an S3 endpoint (+ IAM permissions)
 4) Replace other static parameters to dynamic parameters (F.E. the region, switch it to us-east-1 by default)
-5) Add more tests
-6) Update to a modern frontend (React?)
-7) Move to ECS, ECR and EKS (move to one or more of them)
-8) Improve the website in general, adding features
+5) Change the app.py to continue checking for a DB endpoint in case of failure
+6) Add more tests (check app.py is working after building the image phase?)
+7) Add logs for better troubleshooting
+8) Update to a modern frontend (React?)
+9) Move to ECS, ECR and EKS (move to one or more of them)
+10) Improve the website in general, adding features
