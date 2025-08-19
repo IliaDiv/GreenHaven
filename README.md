@@ -1,4 +1,4 @@
-# CDI/CD Project (Website Deployment)
+# CI/CD Project (Website Deployment)
 - Frontend - HTML, CSS, JS.
 - Backend - Flask, RDS DB Instance
 
