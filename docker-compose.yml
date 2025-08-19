@@ -1,9 +1,0 @@
-services:
-  flask-app:
-    image: irbis3/flask-backend:latest
-    ports:
-      - "5000:5000"
-    command: python app.py
-
-volumes:
-  mysql_data:
