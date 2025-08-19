@@ -66,14 +66,15 @@ This creates a security-in-depth approach where each tier can only communicate w
 - Perfection Status - quite far from perfection
 
 # Roadmap:
-1) Generate session secret key for the flask app
-2) Get DB credentials from Secrets Manager (inside the flask app?) to write and get information from the database instead of using hard-coded credentials (+ IAM permissions)
-3) Move the images and the video to S3 and get it inside the flask app using an S3 endpoint (+ IAM permissions)
-4) Replace other static parameters to dynamic parameters (F.E. the region, switch it to us-east-1 by default)
-5) Change the app.py to continue checking for a DB endpoint in case of failure
-6) Make IAM roles instead of pre-configuring, based on the resources ARN created in the template.yml
-7) Add more tests (check app.py is working after building the image phase?)
-8) Add logs for better troubleshooting
-9) Update to a modern frontend (React?)
-10) Move to ECS, ECR and EKS (move to one or more of them)
-11) Improve the website in general, adding features
+1) Correct the IAM DB Authentication use the token for the password (incorrect usage - need to be fixed)
+2) Generate session secret key for the flask app
+3) Get DB credentials from Secrets Manager (inside the flask app?) to write and get information from the database instead of using hard-coded credentials (+ IAM permissions)
+4) Move the images and the video to S3 and get it inside the flask app using an S3 endpoint (+ IAM permissions)
+5) Replace other static parameters to dynamic parameters (F.E. the region, switch it to us-east-1 by default)
+6) Change the app.py to continue checking for a DB endpoint in case of failure
+7) Make IAM roles instead of pre-configuring, based on the resources ARN created in the template.yml
+8) Add more tests (check app.py is working after building the image phase?)
+9) Add logs for better troubleshooting
+10) Update to a modern frontend (React?)
+11) Move to ECS, ECR and EKS (move to one or more of them)
+12) Improve the website in general, adding features
