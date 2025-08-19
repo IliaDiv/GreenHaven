@@ -72,7 +72,7 @@ This creates a security-in-depth approach where each tier can only communicate w
 4) Move the images and the video to S3 and get it inside the flask app using an S3 endpoint (+ IAM permissions)
 5) Replace other static parameters to dynamic parameters (F.E. the region, switch it to us-east-1 by default)
 6) Change the app.py to continue checking for a DB endpoint in case of failure
-7) Make IAM roles instead of pre-configuring, based on the resources ARN created in the template.yml
+7) Re-write using Terraform and Make IAM roles instead of pre-configuring, based on the resources ARN created in the template.yml
 8) Add more tests (check app.py is working after building the image phase?)
 9) Add logs for better troubleshooting
 10) Update to a modern frontend (React?)
