@@ -73,8 +73,9 @@ This creates a security-in-depth approach where each tier can only communicate w
 5) Replace other static parameters to dynamic parameters (F.E. the region, switch it to us-east-1 by default)
 6) Change the app.py to continue checking for a DB endpoint in case of failure
 7) Re-write using Terraform and Make IAM roles instead of pre-configuring, based on the resources ARN created in the template.yml
-8) Add more tests (check app.py is working after building the image phase?)
-9) Add logs for better troubleshooting
-10) Update to a modern frontend (React?)
-11) Move to ECS, ECR and EKS (move to one or more of them)
-12) Improve the website in general, adding features
+8) Re-write using Docker Webhooks
+9) Add more tests (check app.py is working after building the image phase?)
+10) Add logs for better troubleshooting
+11) Update to a modern frontend (React?)
+12) Move to ECS, ECR and EKS (move to one or more of them)
+13) Improve the website in general, adding features
